@@ -2,7 +2,7 @@
 session_start();
 include 'config.php';
 
-// Sprawdzanie, czy użytkownik jest już zalogowany
+
 if (isset($_SESSION['user_id'])) {
     header('Location: dashboard.php');
     exit;
@@ -11,7 +11,7 @@ if (isset($_SESSION['user_id'])) {
 $register_error = '';
 $register_success = '';
 
-// Obsługa rejestracji
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
@@ -57,61 +57,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rejestracja</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
-        .register-container {
-            max-width: 400px;
-            width: 100%;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: #ffffff;
-        }
-        .register-container h2 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .password-check, .confirm-password-check {
-            font-size: 0.9em;
-            color: red;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-        .password-check.valid {
-            color: green;
-            opacity: 1;
-        }
-        .confirm-password-check.valid {
-            color: green;
-            opacity: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+ 
 </head>
 <body>
 <div class="register-container">
     <h2>Rejestracja</h2>
 
-    <!-- Wyświetlanie błędów rejestracji -->
+
     <?php if (!empty($register_error)): ?>
         <div class="alert alert-danger" role="alert">
             <?= htmlspecialchars($register_error) ?>
         </div>
     <?php endif; ?>
 
-    <!-- Wyświetlanie sukcesu rejestracji -->
+   
     <?php if (!empty($register_success)): ?>
         <div class="alert alert-success" role="alert">
             <?= htmlspecialchars($register_success) ?>
         </div>
     <?php endif; ?>
 
-    <!-- Formularz rejestracji -->
+  
     <form method="POST" action="register.php" onsubmit="return validateForm()">
         <div class="form-group">
             <label for="username">Nazwa użytkownika</label>
@@ -130,11 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
         <button type="submit" name="register" class="btn btn-primary btn-block">Zarejestruj się</button>
     </form>
 
-    <!-- Przycisk do logowania -->
+
     <a href="login.php" class="btn btn-secondary btn-block mt-3">Powrót do logowania</a>
 </div>
 
-<!-- Walidacja po stronie klienta (frontend) -->
+
 <script>
     function checkPassword() {
         var password = document.getElementById('password').value;

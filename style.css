@@ -1,0 +1,45 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+}
+.register-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+.register-container h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+.password-check, .confirm-password-check {
+    font-size: 0.9em;
+    color: red;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+.password-check.valid {
+    color: green;
+    opacity: 1;
+}
+.confirm-password-check.valid {
+    color: green;
+    opacity: 1;
+}
+.login-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+.login-container h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}

@@ -1,17 +1,17 @@
 <?php
 session_start();
 
-// Sprawdzanie, czy użytkownik jest zalogowany
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
 
-// Obsługa wylogowania
+
 if (isset($_POST['logout'])) {
-    session_unset(); // Usuwa wszystkie zmienne sesji
-    session_destroy(); // Kończy sesję
-    header('Location: login.php'); // Przekierowanie na stronę logowania
+    session_unset();
+    session_destroy();
+    header('Location: login.php');
     exit;
 }
 ?>
@@ -28,7 +28,7 @@ if (isset($_POST['logout'])) {
 <div class="container mt-5">
     <h1>Witaj w panelu użytkownika!</h1>
 
-    <!-- Formularz wylogowania -->
+  
     <form method="POST" action="dashboard.php">
         <button type="submit" name="logout" class="btn btn-danger">Wyloguj się</button>
     </form>
