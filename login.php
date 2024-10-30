@@ -1,42 +1,55 @@
 <?php
-global $pdo;
-session_start();
-include 'config.php';
+session_start(); // Rozpoczęcie sesji
+require 'db.php';
+  $host = 'mysql12.serv00.com';
+$db = 'm10280_motocykle_skep';
+$user = 'm10280_jolyozaur'; 
+$pass = 'Haslo123';
 
+$conn = new mysqli($host, $user, $pass, $db);
 
-if (isset($_SESSION['user_id'])) {
-    header('Location: dashboard.php');
-    exit;
+// Sprawdzenie połączenia
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
+$login_error = ""; // Zmienna do przechowywania błędów logowania
 
-$login_error = '';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
-    $username = trim($_POST['username']);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
+    // Wyszukanie użytkownika w bazie danych
+    $sql = "SELECT id, username, password_hash FROM users WHERE username = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->store_result();
 
-    if (!empty($username) && !empty($password)) {
-      
-        $stmt = $pdo->prepare("SELECT id, password FROM users WHERE username = :username");
-        $stmt->execute(['username' => $username]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($stmt->num_rows == 1) {
+        $stmt->bind_result($id, $username, $passwordHash);
+        $stmt->fetch();
 
-      
-        if ($user && password_verify($password, $user['password'])) {
-            session_regenerate_id(true); 
-            $_SESSION['user_id'] = $user['id'];
-            header('Location: dashboard.php');
+        // Weryfikacja hasła
+        if (password_verify($password, $passwordHash)) {
+            // Zapisanie ID i nazwy użytkownika w sesji
+            $_SESSION['user_id'] = $id;
+            $_SESSION['username'] = $username;
+
+            // Przekierowanie na stronę główną
+            header("Location: index.php");
             exit;
         } else {
-            $login_error = "Nieprawidłowa nazwa użytkownika lub hasło.";
+            $login_error = "Nieprawidłowe hasło.";
         }
     } else {
-        $login_error = "Wprowadź nazwę użytkownika i hasło.";
+        $login_error = "Nie znaleziono użytkownika.";
     }
+    $stmt->close();
 }
+$conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -44,23 +57,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logowanie</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-  
-        
+    <link rel="stylesheet" href="style_login_rej.css">
 </head>
 <body>
 <div class="login-container">
     <h2>Logowanie</h2>
 
-
+    <!-- Wyświetlanie błędów logowania -->
     <?php if (!empty($login_error)): ?>
         <div class="alert alert-danger" role="alert">
             <?= htmlspecialchars($login_error) ?>
         </div>
     <?php endif; ?>
 
-
-    <form method="POST" action="login.php">
+    <!-- Formularz logowania -->
+    <form method="POST" action="login.php" class="form-container">
         <div class="form-group">
             <label for="username">Nazwa użytkownika</label>
             <input type="text" class="form-control" id="username" name="username" placeholder="Wprowadź nazwę użytkownika" required>
@@ -72,8 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
         <button type="submit" name="login" class="btn btn-primary btn-block">Zaloguj się</button>
     </form>
 
-   
+    <!-- Przycisk do rejestracji i strony głównej -->
     <a href="register.php" class="btn btn-secondary btn-block mt-3">Rejestracja</a>
+    <a href="index.php" class="btn btn-secondary btn-block mt-3">Strona Główna</a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

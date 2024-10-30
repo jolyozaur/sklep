@@ -1,8 +1,8 @@
 <?php
 session_start();
-include 'config.php';
+include 'db.php';
 
-
+// Sprawdzanie, czy użytkownik jest już zalogowany
 if (isset($_SESSION['user_id'])) {
     header('Location: dashboard.php');
     exit;
@@ -11,12 +11,12 @@ if (isset($_SESSION['user_id'])) {
 $register_error = '';
 $register_success = '';
 
-
+// Obsługa rejestracji
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-
+    $email = trim($_POST['email']); // Dodanie adresu e-mail
     // Sprawdzenie, czy dane są poprawne
     if (empty($username) || empty($password) || empty($confirm_password)) {
         $register_error = "Wszystkie pola są wymagane.";
@@ -37,11 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
             // Wstawianie użytkownika do bazy danych
-            $stmt = $pdo->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
-            $stmt->execute([
-                'username' => $username,
-                'password' => $hashed_password
-            ]);
+            $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, email) VALUES (:username, :password, :email)");
+            $stmt->execute(['username' => $username, 'password' => $hashed_password, 'email' => $email]);
+            
+            
 
             // Sukces rejestracji
             $register_success = "Rejestracja przebiegła pomyślnie! Zostaniesz przekierowany na stronę logowania.";
@@ -50,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -57,29 +57,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rejestracja</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
- 
+    <link rel="stylesheet" href="style_login_rej.css">
+
+       
 </head>
 <body>
 <div class="register-container">
     <h2>Rejestracja</h2>
 
-
+    <!-- Wyświetlanie błędów rejestracji -->
     <?php if (!empty($register_error)): ?>
         <div class="alert alert-danger" role="alert">
             <?= htmlspecialchars($register_error) ?>
         </div>
     <?php endif; ?>
 
-   
+    <!-- Wyświetlanie sukcesu rejestracji -->
     <?php if (!empty($register_success)): ?>
         <div class="alert alert-success" role="alert">
             <?= htmlspecialchars($register_success) ?>
         </div>
     <?php endif; ?>
 
-  
-    <form method="POST" action="register.php" onsubmit="return validateForm()">
+    <!-- Formularz rejestracji -->
+    <form method="POST" action="register.php" class="form-container" onsubmit="return validateForm()">
         <div class="form-group">
             <label for="username">Nazwa użytkownika</label>
             <input type="text" class="form-control" id="username" name="username" placeholder="Wprowadź nazwę użytkownika" required>
@@ -94,14 +95,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
             <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Powtórz hasło" required oninput="checkPasswordMatch()">
             <small id="confirmPasswordHelp" class="form-text confirm-password-check">Hasła się nie zgadzają.</small>
         </div>
+        <div class="form-group">
+    <label for="email">Adres e-mail</label>
+    <input type="email" class="form-control" id="email" name="email" required placeholder="Wprowadź adres e-mail" required>
+</div>
         <button type="submit" name="register" class="btn btn-primary btn-block">Zarejestruj się</button>
     </form>
 
-
+    <!-- Przycisk do logowania -->
     <a href="login.php" class="btn btn-secondary btn-block mt-3">Powrót do logowania</a>
 </div>
 
-
+<!-- Walidacja po stronie klienta (frontend) -->
 <script>
     function checkPassword() {
         var password = document.getElementById('password').value;

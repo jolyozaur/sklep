@@ -1,0 +1,141 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1b1b1b; 
+    color: #eaeaea; 
+}
+
+header {
+    background: #333; 
+    color: #fff; 
+    padding: 10px 0;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav a {
+    color: #fff;     text-decoration: none;
+}
+
+.product-container {
+    display: flex;
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #2a2a2a; 
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.product-image {
+    flex: 1;
+}
+
+.product-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px 0 0 8px;
+}
+
+.product-details {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.product-details h2 {
+    margin: 0;
+    font-size: 1.8em;
+}
+
+.price {
+    font-size: 1.5em;
+    color: #e67e22; 
+    margin: 10px 0;
+}
+
+.buy-button {
+    background-color: #ff3b3f; 
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.buy-button:hover {
+    background-color: #ff3b3f; 
+}
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background: #333; 
+    color: #fff; 
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.product-description, .product-gallery, .product-reviews {
+    margin: 20px auto;
+    max-width: 800px;
+    background: #2a2a2a; 
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-description h3, .product-gallery h3, .product-reviews h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #eaeaea; 
+}
+
+.product-description p {
+    line-height: 1.6;
+    color: #bbb;
+}
+
+.product-gallery {
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-images {
+    display: flex;
+    gap: 10px;
+}
+
+.gallery-images img {
+    width: 100%;
+    max-width: 200px;
+    border-radius: 8px;
+}
+
+.product-reviews {
+    margin-top: 20px;
+}
+
+.review {
+    border-top: 1px solid #444; 
+    padding: 10px 0;
+}
+
+.review p {
+    margin: 5px 0;
+    color: #bbb; 
+}
