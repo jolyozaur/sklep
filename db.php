@@ -1,8 +1,8 @@
 <?php
-$host = 'mysql12.serv00.com';
-$db = 'm10280_motocykle_skep'; 
-$user = 'm10280_jolyozaur'; 
-$pass = 'Haslo123'; 
+$host = 'localhost';
+$db = 'm10280_motocykle_skep';
+$user = 'root'; 
+$pass = '';
 
 // Tworzenie połączenia
 $conn = new mysqli($host, $user, $pass, $db);

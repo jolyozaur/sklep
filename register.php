@@ -3,10 +3,7 @@ session_start();
 include 'db.php';
 
 // Sprawdzanie, czy użytkownik jest już zalogowany
-if (isset($_SESSION['user_id'])) {
-    header('Location: dashboard.php');
-    exit;
-}
+
 
 $register_error = '';
 $register_success = '';
@@ -48,6 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
         }
     }
 }
+
+
+//ZMIANA DANYCH
+
+
+
+
+
 ?>
 
 <!DOCTYPE html>

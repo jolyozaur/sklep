@@ -1,0 +1,107 @@
+/* Globalne ustawienia stylu */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: #1b1b1b;
+    color: #eaeaea;
+}
+
+/* Nagłówek formularza */
+h2 {
+    font-size: 2.5rem;
+    color: #ff3b3f;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 4px rgba(255, 59, 63, 0.8);
+}
+
+/* Styl formularza */
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Stylowanie sekcji formularza */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+    color: #ff3b3f;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #333;
+    color: #eaeaea;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+    outline-color: #ff3b3f;
+}
+
+/* Przycisk zapisz zmiany */
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #ff3b3f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+button[type="submit"]:hover {
+    background-color: #ff6164;
+}
+
+/* Przycisk anuluj */
+.btn-secondary {
+    padding: 10px 20px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Responsywność dla urządzeń mobilnych */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    input[type="text"], input[type="number"], button[type="submit"], .btn-secondary {
+        font-size: 0.9rem;
+    }
+}

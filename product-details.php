@@ -61,7 +61,7 @@ $result_opinie = $stmt_opinie->get_result();
             <div class="product-details">
                 <h2><?php echo $product['name']; ?></h2>
                 <p class="price">Cena: <strong><?php echo $product['price']; ?> PLN</strong></p>
-                <p>Typ: <?php echo $product['type']; ?></p>
+                <p>Typ: <?php echo $product['type']; ?></p><br>
                 <button class="buy-button">Kup Teraz</button>
             </div>
         </div>

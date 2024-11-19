@@ -1,4 +1,8 @@
 /* Globalne ustawienia stylu */
+body {
+    background-color: #1b1b1b !important;
+    color: #eaeaea !important   ;
+}
 * {
     margin: 0;
     padding: 0;
@@ -6,10 +10,7 @@
     font-family: 'Roboto', sans-serif;
 }
 
-body {
-    background-color: #1b1b1b;
-    color: #eaeaea;
-}
+
 
 /* Nagłówek */
  .header-container {

@@ -2,11 +2,12 @@
 // Ustawienie nagłówka JSON
 header('Content-Type: application/json');
 
-// Konfiguracja połączenia z bazą danych
-$host = 'mysql12.serv00.com';
-$db = 'm10280_motocykle_skep';
-$user = 'm10280_jolyozaur';
-$pass = 'Haslo123';
+
+
+$host = 'localhost'; // Adres serwera bazy danych
+$db = 'm10280_motocykle_skep'; // Nazwa bazy danych
+$user = 'root'; // Zmień na swoją nazwę użytkownika
+$pass = '';
 
 $charset = 'utf8mb4';
 

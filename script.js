@@ -74,7 +74,7 @@ function filterProducts(type) {
     var span = document.getElementsByClassName("close")[0];
 
     // Kiedy użytkownik kliknie na zamknij, zamknij modal
-    span.onclick = function() { 
+    span.onclick = function() {
         modal.style.display = "none";
     }
 

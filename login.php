@@ -1,10 +1,10 @@
 <?php
-session_start(); // Rozpoczęcie sesji
+session_start();
 require 'db.php';
-  $host = 'mysql12.serv00.com';
+$host = 'localhost';
 $db = 'm10280_motocykle_skep';
-$user = 'm10280_jolyozaur'; 
-$pass = 'Haslo123';
+$user = 'root'; 
+$pass = '';
 
 $conn = new mysqli($host, $user, $pass, $db);
 
@@ -36,9 +36,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $id;
             $_SESSION['username'] = $username;
 
-            // Przekierowanie na stronę główną
-            header("Location: index.php");
-            exit;
+            // Sprawdzenie, czy to administrator
+            if ($username === 'admin1234') {
+                header("Location: admin.php");
+                exit;
+            } else {
+                header("Location: index.php");
+                exit;
+            }
         } else {
             $login_error = "Nieprawidłowe hasło.";
         }
@@ -57,7 +62,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logowanie</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style_login_rej.css">
+    <link rel="stylesheet" href="style_login_rej.css"> <!-- Używamy tego samego stylu -->
 </head>
 <body>
 <div class="login-container">
