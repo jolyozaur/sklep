@@ -181,8 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
                 </tr>
             </table>
             <form method="POST" action="index.php"><a class="btn btn-secondary " name="zmiana_hasla" onclick="openpasswordModal()"> Zmień Dane</a></form>
-        <?php else: ?>
-            <p>Brak danych użytkownika.</p>
+    
         <?php endif; ?>
         <?php if ($isAdmin === true){
  

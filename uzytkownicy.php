@@ -6,7 +6,7 @@ $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
 $userData = null;
 $isAdmin = false; // Domyślna wartość
-
+$status_admina = null;
 // Pobieranie danych użytkownika
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
@@ -40,7 +40,7 @@ if ($conn->connect_error) {
 }
 
 // Pobieranie danych o produktach
-$sql = "SELECT * FROM products";
+$sql = "SELECT * FROM users";
 $result = $conn->query($sql);
 ?>
 
@@ -62,42 +62,51 @@ $result = $conn->query($sql);
 <body>
     
 <div class="container mt-5">
-<br></br><br></br><br></br><br></br><br></br>
+
     <h2>Panel Administracyjny</h2>
     <p>Witaj w panelu administracyjnym, <?php echo $_SESSION['username']; ?>!</p>
 
      
     <a href="logout.php" class="btn btn-danger ">Wyloguj się</a>
     <a href="index.php" class="btn btn-danger ">główna strona</a>
-    <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>
+    <a href="admin.php" class="btn btn-danger ">Zarządzaj produktami</a>
                 
     <h3 class="dane">Lista produktów</h3><br>
     <table class="table">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nazwa</th>
-                <th>Typ</th>
-                <th>Cena</th>
-                <th>Opis</th>
+                <th>username</th>
+                <th>email</th>
+                <th>data utworzenia</th>
+                <th>Czy admin</th>
                 <th>Opcje</th>
             </tr>
         </thead>
         <tbody>
             <?php
+            $status_admina = 'null';
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
+                   if($row['czy_admin'] == 1){
+                    $status_admina = 'tak';}
+                    else{
+                      $status_admina = 'nie';
+                    }
+                    
+                   
                     echo "<tr>";
                     echo "<td>" . $row['id'] . "</td>";
-                    echo "<td>" . $row['name'] . "</td>";
-                    echo "<td>" . $row['type'] . "</td>";
-                    echo "<td>" . $row['price'] . "</td>";
-                    echo "<td>" . $row['Opis'] . "</td>";
+                    echo "<td>" . $row['username'] . "</td>";
+                    echo "<td>" . $row['email'] . "</td>";
+                    echo "<td>" . $row['created_at'] . "</td>";
+                    echo "<td>" . $status_admina . "</td>";
                     echo "<td>
-                            <a href='edit_product.php?id=" . $row['id'] . "' class='btn btn-warning'>Edytuj</a> |
-                            <a href='delete_product.php?id=" . $row['id'] . "' class='btn btn-danger'>Usuń</a>
+                            <a href='edit_users.php?id=" . $row['id'] . "' class='btn btn-warning'>Edytuj</a> |
+                            <a href='delete_users.php?id=" . $row['id'] . "' class='btn btn-danger'>Usuń</a>
                           </td>";
                     echo "</tr>";
+                   
                 }
             } else {
                 echo "<tr><td colspan='5'>Brak produktów</td></tr>";
