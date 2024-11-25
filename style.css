@@ -1,355 +1,451 @@
 /* Globalne ustawienia stylu */
 body {
-    background-color: #1b1b1b !important;
-    color: #eaeaea !important   ;
+  background-color: #1b1b1b !important;
+  color: #eaeaea !important   ;
 }
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
 }
 
+.cart {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  color: #eaeaea;
+}
 
+.cart table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cart table th,
+.cart table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
+
+.cart table th {
+  background-color: #3e3e3e;
+}
+
+.cart table button {
+  background-color: #e63946;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cart table button:hover {
+  background-color: #c53030;
+}
 
 /* Nagłówek */
- .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 header {
-    background: linear-gradient(90deg, #0f0f0f, #3e3e3e);
-    padding: 1.5rem 0;
-    border-bottom: 2px solid #222;
+  background: linear-gradient(90deg, #0f0f0f, #3e3e3e);
+  padding: 1.5rem 0;
+  border-bottom: 2px solid #222;
 }
 
 .container {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
 }
 
 header h1 {
-    font-size: 2rem;
-    color: #ff3b3f;
-    text-shadow: 1px 1px 4px rgba(255, 59, 63, 0.8);
-    font-weight: 700;
-    letter-spacing: 1px;
+  font-size: 2rem;
+  color: #ff3b3f;
+  text-shadow: 1px 1px 4px rgba(255, 59, 63, 0.8);
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 /* Nawigacja */
 nav ul {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
+  list-style: none;
+  display: flex;
+  gap: 1rem;
 }
 
 nav ul li a {
-    color: #eaeaea;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
+  color: #eaeaea;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
 nav ul li a:hover {
-    color: #ff3b3f;
+  color: #ff3b3f;
 }
 
 /* Pasek wyszukiwania */
 .search-bar {
-    display: flex;
-    gap: 0.5rem;
-    margin: 1.5rem 0;
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
 }
 
 .search-bar input {
-    padding: 0.5rem;
-    border: none;
-    border-radius: 5px;
-    background-color: #2a2a2a;
-    color: #eaeaea;
-    width: 200px;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #2a2a2a;
+  color: #eaeaea;
+  width: 200px;
 }
 
 .search-bar button {
-    background-color: #ff3b3f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  background-color: #ff3b3f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .search-bar button:hover {
-    background-color: #ff6164;
+  background-color: #ff6164;
 }
 
 /* Sekcja filtrów */
 .filter-container {
-    margin: 2rem 0;
-    text-align: center;
+  margin: 2rem 0;
+  text-align: center;
 }
 
 .filter-container h2 {
-    font-size: 2rem;
-    color: #ff3b3f;
-    margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #ff3b3f;
+  margin-bottom: 1rem;
 }
 
 /* Przyciski filtrów */
 .filter-options {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .filter-button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 5px;
-    background-color: #2a2a2a;
-    color: #eaeaea;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #2a2a2a;
+  color: #eaeaea;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .filter-button:hover {
-    background-color: #ff3b3f;
-    transform: scale(1.05);
+  background-color: #ff3b3f;
+  transform: scale(1.05);
 }
 
 /* Aktywny filtr */
 .filter-button.active {
-    background-color: #ff3b3f;
-    color: white;
+  background-color: #ff3b3f;
+  color: white;
 }
 
 /* Sekcja z motocyklami */
 .product-list {
-    padding: 3rem 0;
-    text-align: center;
+  padding: 3rem 0;
+  text-align: center;
 }
 
 .product-list h2 {
-    font-size: 2.5rem;
-    color: #ff3b3f;
-    margin-bottom: 2rem;
-    text-shadow: 2px 2px 6px rgba(255, 59, 63, 0.7);
+  font-size: 2.5rem;
+  color: #ff3b3f;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 6px rgba(255, 59, 63, 0.7);
 }
 
 #products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
 }
 
 /* Karta produktu */
 .product-card {
-    background-color: #2a2a2a;
-    padding: 1rem;
-    border-radius: 10px;
-    transition: transform 0.3s ease;
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  background-color: #2a2a2a;
+  padding: 1rem;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
 .product-card:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .product-card img {
-    width: 100%; /* Ustalamy pełną szerokość */
-    height: 150px; /* Ustalamy stałą wysokość */
-    object-fit: cover; /* Przycinamy obraz do kontenera */
-    border-radius: 10px;
-    margin-bottom: 1rem;
+  width: 100%; /* Ustalamy pełną szerokość */
+  height: 150px; /* Ustalamy stałą wysokość */
+  object-fit: cover; /* Przycinamy obraz do kontenera */
+  border-radius: 10px;
+  margin-bottom: 1rem;
 }
 
 .product-card h3 {
-    color: #ff6164;
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+  color: #ff6164;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .product-card p {
-    font-size: 1rem;
-    color: #b3b3b3;
-    margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #b3b3b3;
+  margin-bottom: 1rem;
 }
 
 .product-card button {
-    padding: 0.5rem 1rem;
-    background-color: #ff3b3f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 0.5rem 1rem;
+  background-color: #ff3b3f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .product-card button:hover {
-    background-color: #ff6164;
+  background-color: #ff6164;
 }
 
 /* Stopka */
 footer {
-    text-align: center;
-    padding: 1.5rem;
-    background-color: #333;
-    color: #eaeaea;
-    border-top: 2px solid #222;
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #333;
+  color: #eaeaea;
+  border-top: 2px solid #222;
 }
 
 footer p {
-    font-size: 0.9rem;
-    color: #999;
+  font-size: 0.9rem;
+  color: #999;
 }
 
-
 .logout-button {
-    background-color: #e63946;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  background-color: #e63946;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .logout-button:hover {
-    background-color: #c53030;
+  background-color: #c53030;
 }
 /* Styl modala */
 .modal {
-    display: none; /* Ukryty domyślnie */
-    position: fixed; /* Pozostaje na ekranie */
-    z-index: 1000; /* Wyższy z-index, aby był na wierzchu */
-    padding-top: 60px; /* Odsunięcie od góry */
-    left: 0;
-    top: 0;
-    width: 100%; /* Szerokość 100% */
-    height: 100%; /* Wysokość 100% */
-    overflow: auto; /* Włącza przewijanie, jeśli to konieczne */
-    background-color: rgb(0,0,0); /* Czarne tło */
-    background-color: rgba(0,0,0,0.9); /* Czarne tło z przezroczystością */
+  display: none; /* Ukryty domyślnie */
+  position: fixed; /* Pozostaje na ekranie */
+  z-index: 1000; /* Wyższy z-index, aby był na wierzchu */
+  padding-top: 60px; /* Odsunięcie od góry */
+  left: 0;
+  top: 0;
+  width: 100%; /* Szerokość 100% */
+  height: 100%; /* Wysokość 100% */
+  overflow: auto; /* Włącza przewijanie, jeśli to konieczne */
+  background-color: rgb(0, 0, 0); /* Czarne tło */
+  background-color: rgba(0, 0, 0, 0.9); /* Czarne tło z przezroczystością */
 }
 
 .modal-content {
-    margin: auto;
-    display: block;
-    width: 80%; /* Szerokość obrazu */
-    max-width: 700px; /* Maksymalna szerokość obrazu */
+  margin: auto;
+  display: block;
+  width: 80%; /* Szerokość obrazu */
+  max-width: 700px; /* Maksymalna szerokość obrazu */
 }
 
 .close-modal-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007BFF; /* Bootstrap primary color */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .close-modal-btn:hover {
-    background-color: #0056b3; /* Darker shade on hover */
+  background-color: #0056b3; /* Darker shade on hover */
 }
 
 .close {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
-    transition: 0.3s;
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
 .modal-content {
-    margin: auto;
-    display: block;
-    width: 80%; /* Szerokość obrazu */
-    max-width: 700px; /* Maksymalna szerokość obrazu */
+  margin: auto;
+  display: block;
+  width: 80%; /* Szerokość obrazu */
+  max-width: 700px; /* Maksymalna szerokość obrazu */
 }
 
 .close {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
-    transition: 0.3s;
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
 .close:hover,
 .close:focus {
-    color: #bbb;
-    text-decoration: none;
-    cursor: pointer;
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
 }
-#close{
-    background-color: red;
+#close {
+  background-color: red;
 }
-        .modal-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+.modal-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
 
-        .modal-content table td {
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
+.modal-content table td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
 
-        .modal-content table td:first-child {
-            font-weight: bold;
-            width: 30%; /* Adjust this as needed */
-        }
+.modal-content table td:first-child {
+  font-weight: bold;
+  width: 30%; /* Adjust this as needed */
+}
 
 .close:hover,
 .close:focus {
-    color: #bbb;
-    text-decoration: none;
-    cursor: pointer;
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .account-info {
-    display: flex;
-    align-items: center;
-    position: relative; /* Needed for positioning the dropdown */
-    margin-left: auto; /* Push the account info to the right */
-    margin-right: 20px; /* Spacing between account info and the right edge */
+  display: flex;
+  align-items: center;
+  position: relative; /* Needed for positioning the dropdown */
+  margin-left: auto; /* Push the account info to the right */
+  margin-right: 20px; /* Spacing between account info and the right edge */
 }
 
 .account-icon {
-    margin-left: 10px;
-    cursor: pointer;
-    font-size: 24px; /* Adjust size as needed */
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 24px; /* Adjust size as needed */
 }
 
 .account-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 30px; /* Adjust according to your layout */
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 1000; /* Make sure it is on top of other elements */
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 30px; /* Adjust according to your layout */
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Make sure it is on top of other elements */
+}
+.cart-icon {
+  position: relative;
+  cursor: pointer;
+  color: #333;
+  font-size: 24px;
+  margin-left: 20px;
 }
 
-.account-menu a, .account-menu button {
-    display: block;
-    padding: 10px;
-    text-decoration: none;
-    color: black;
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
 }
 
-.account-menu a:hover, .account-menu button:hover {
-    background-color: #f0f0f0;
+.cart-content {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 40px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  z-index: 10;
+}
+
+.cart-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.cart-content li {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cart-content p {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.remove-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  background-color: #d32f2f;
+}
+
+.account-menu a,
+.account-menu button {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+}
+
+.account-menu a:hover,
+.account-menu button:hover {
+  background-color: #f0f0f0;
 }

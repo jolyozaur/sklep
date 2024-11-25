@@ -11,7 +11,9 @@ $isAdmin = false; // Domyślna wartość
 // Pobieranie danych użytkownika
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT username, email, czy_admin FROM users WHERE id = ?");
+    $stmt = $pdo->prepare(
+        'SELECT username, email, czy_admin FROM users WHERE id = ?'
+    );
     $stmt->execute([$userId]);
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -25,9 +27,52 @@ if (isset($_POST['logout'])) {
     session_unset(); // Usuwa wszystkie zmienne sesji
     session_destroy(); // Kończy sesję
     header('Location: index.php'); // Przekierowanie na stronę główną
-    exit;
+    exit();
+}
+// Inicjalizacja koszyka, jeśli nie istnieje
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
 }
 
+// Funkcja dodawania produktu do koszyka
+if (isset($_POST['add_to_cart'])) {
+    $product_id = $_POST['product_id'];
+    $product_name = $_POST['product_name'];
+    $product_price = $_POST['product_price'];
+    $quantity = $_POST['quantity'];
+
+    // Sprawdzanie, czy produkt już istnieje w koszyku
+    $found = false;
+    foreach ($_SESSION['cart'] as &$item) {
+        if ($item['id'] == $product_id) {
+            $item['quantity'] += $quantity;
+            $found = true;
+            break;
+        }
+    }
+    if (!$found) {
+        $_SESSION['cart'][] = [
+            'id' => $product_id,
+            'name' => $product_name,
+            'price' => $product_price,
+            'quantity' => $quantity,
+        ];
+    }
+    header('Location: index.php');
+    exit();
+}
+
+// Funkcja usuwania produktu z koszyka
+if (isset($_POST['remove_from_cart'])) {
+    $product_id = $_POST['product_id'];
+    $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) use (
+        $product_id
+    ) {
+        return $item['id'] != $product_id;
+    });
+    header('Location: index.php');
+    exit();
+}
 //ZMIANA DANYCH
 $zmiana_error = '';
 $zmiana_success = '';
@@ -40,25 +85,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
     $zmiana_success = '';
 
     // Walidacja
-    if (empty($new_username) || empty($new_password) || empty($new_confirm_password) || empty($new_email)) {
-        $zmiana_error = "Wszystkie pola są wymagane.";
+    if (
+        empty($new_username) ||
+        empty($new_password) ||
+        empty($new_confirm_password) ||
+        empty($new_email)
+    ) {
+        $zmiana_error = 'Wszystkie pola są wymagane.';
     } elseif ($new_password !== $new_confirm_password) {
-        $zmiana_error = "Hasła nie są zgodne.";
+        $zmiana_error = 'Hasła nie są zgodne.';
     } elseif (strlen($new_password) < 8) {
-        $zmiana_error = "Hasło musi mieć co najmniej 8 znaków.";
+        $zmiana_error = 'Hasło musi mieć co najmniej 8 znaków.';
     } elseif (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
-        $zmiana_error = "Nieprawidłowy adres e-mail.";
+        $zmiana_error = 'Nieprawidłowy adres e-mail.';
     } else {
         // Sprawdzenie czy nazwa użytkownika jest zajęta
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = :username AND id != :user_id");
-        $stmt->execute(['username' => $new_username, 'user_id' => $_SESSION['user_id']]);
+        $stmt = $pdo->prepare(
+            'SELECT id FROM users WHERE username = :username AND id != :user_id'
+        );
+        $stmt->execute([
+            'username' => $new_username,
+            'user_id' => $_SESSION['user_id'],
+        ]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
-            $zmiana_error = "Użytkownik o tej nazwie już istnieje.";
+            $zmiana_error = 'Użytkownik o tej nazwie już istnieje.';
         } else {
             // Haszowanie hasła
-            $new_hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+            $new_hashed_password = password_hash(
+                $new_password,
+                PASSWORD_DEFAULT
+            );
 
             // Aktualizacja danych
             $stmt = $pdo->prepare('
@@ -70,20 +128,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
                 'username' => $new_username,
                 'password' => $new_hashed_password,
                 'email' => $new_email,
-                'user_id' => $_SESSION['user_id']
+                'user_id' => $_SESSION['user_id'],
             ]);
 
             if ($stmt) {
-                $zmiana_success = "Dane zostały zaktualizowane pomyślnie!";
-                header("refresh:1;url=index.php");
-                exit;
+                $zmiana_success = 'Dane zostały zaktualizowane pomyślnie!';
+                header('refresh:1;url=index.php');
+                exit();
             } else {
-                $zmiana_error = "Wystąpił problem podczas aktualizacji danych.";
+                $zmiana_error = 'Wystąpił problem podczas aktualizacji danych.';
             }
         }
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="pl">
@@ -99,37 +156,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
 </head>
 <body >
     <header>
-        <div class="container header-container">
-            <h1>Sklep Motocyklowy</h1>
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Szukaj...">
-                <button onclick="searchProduct()">Wyszukaj</button>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Strona Główna</a></li>
-                    <li><a href="forgot_password.php">Motocykle</a></li>
-                    <?php if ($loggedIn): ?>
-                        <li>
-                            <div class="account-info">
-                                <span class="username"><?= htmlspecialchars($username) ?></span>
-                                <i class="fas fa-user account-icon" onclick="toggleAccountMenu()"></i>
-                                <div id="account-menu" class="account-menu">
-                                    <a href="javascript:void(0)" onclick="openModal()">Informacje o koncie</a>
-                                    <form method="POST" action="index.php">
-                                        <button type="submit" name="logout" class="logout-button">Wyloguj się</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </li>
-                    <?php else: ?>
-                        <li><a href="login.php">Zaloguj</a></li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
+    <div class="container header-container">
+        <h1>Sklep Motocyklowy</h1>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Szukaj...">
+            <button onclick="searchProduct()">Wyszukaj</button>
         </div>
-    </header>
-
+        <nav>
+            <ul>
+                <li><a href="index.php">Strona Główna</a></li>
+                <li><a href="forgot_password.php">Motocykle</a></li>
+                <?php if ($loggedIn): ?>
+                    <li>
+                        <div class="account-info">
+                            <span class="username"><?= htmlspecialchars(
+                                $username
+                            ) ?></span>
+                            <i class="fas fa-user account-icon" onclick="toggleAccountMenu()"></i>
+                            <div id="account-menu" class="account-menu">
+                                <a href="javascript:void(0)" onclick="openModal()">Informacje o koncie</a>
+                                <form method="POST" action="index.php">
+                                    <button type="submit" name="logout" class="logout-button">Wyloguj się</button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                <?php else: ?>
+                    <li><a href="login.php">Zaloguj</a></li>
+                <?php endif; ?>
+                <li>
+                    <!-- Ikona koszyka -->
+                    <div class="cart-icon" onclick="toggleCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count"><?= count(
+                            $_SESSION['cart']
+                        ) ?></span>
+                    </div>
+                    <!-- Zawartość koszyka -->
+                    <div id="cart-content" class="cart-content">
+                        <h2>Twój Koszyk</h2>
+                        <?php if (!empty($_SESSION['cart'])): ?>
+                            <ul>
+                                <?php foreach ($_SESSION['cart'] as $item): ?>
+                                    <li>
+                                        <?= htmlspecialchars(
+                                            $item['name']
+                                        ) ?> (<?= $item['quantity'] ?>)
+                                        - <?= $item['price'] ?> zł
+                                        <form method="POST" action="index.php" style="display:inline;">
+                                            <input type="hidden" name="product_id" value="<?= htmlspecialchars(
+                                                $item['id']
+                                            ) ?>">
+                                            <button type="submit" name="remove_from_cart" class="remove-btn">Usuń</button>
+                                        </form>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <p>Łączna kwota: 
+                                <?= array_reduce(
+                                    $_SESSION['cart'],
+                                    fn($sum, $item) => $sum +
+                                        $item['price'] * $item['quantity'],
+                                    0
+                                ) ?> zł
+                            </p>
+                        <?php else: ?>
+                            <p>Koszyk jest pusty.</p>
+                        <?php endif; ?>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
     <main>
         <div class="container">
             <section class="filter-container">
@@ -163,7 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
     <div class="modal-content" style="background-color:transparent;">
    
         <h2>Informacje o koncie</h2>
-        <?php if ($userData):  ?>
+        <?php if ($userData): ?>
             <table>
                 <tr>
                     <td><strong>Login:</strong></td>
@@ -183,10 +282,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
             <form method="POST" action="index.php"><a class="btn btn-secondary " name="zmiana_hasla" onclick="openpasswordModal()"> Zmień Dane</a></form>
     
         <?php endif; ?>
-        <?php if ($isAdmin === true){
- 
- 
- echo '
+        <?php if ($isAdmin === true) {
+            echo '
         <section class="admin-panel">
        
            
@@ -197,8 +294,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
                 <a href="admin.php" class="btn btn-secondary">Zarządzaj produktami</a>
                 <a href="zamowienia.php" class="btn btn-secondary">Przeglądaj zamówienia</a>
 
-            </section>';}
-       ?>
+            </section>';
+        } ?>
     </section>
         <button class="close-modal-btn" id="close" onclick="closeModal()">Zamknij</button>
     </div>
@@ -212,7 +309,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
             <form method="POST" action="index.php" class="form-container" onsubmit="return validateForm()">
         <div class="form-group">
             <label for="new_username">Nazwa użytkownika</label>
-            <input type="text" class="form-control" id="new_username" name="new_username" placeholder="Wprowadź nazwę użytkownika" value="<?php echo $userData['username'] ?>" required>
+            <input type="text" class="form-control" id="new_username" name="new_username" placeholder="Wprowadź nazwę użytkownika" value="<?php echo $userData[
+                'username'
+            ]; ?>" required>
         </div>
         <div class="form-group">
             <label for="new_password">Hasło</label>
@@ -226,7 +325,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
         </div>
         <div class="form-group">
     <label for="email">Adres e-mail</label>
-    <input type="email" class="form-control" id="new_email" name="new_email" required placeholder="Wprowadź adres e-mail" value="<?php echo $userData['email'] ?>" required>
+    <input type="email" class="form-control" id="new_email" name="new_email" required placeholder="Wprowadź adres e-mail" value="<?php echo $userData[
+        'email'
+    ]; ?>" required>
 </div>
         <button type="submit" name="zmianadanych" class="btn btn-primary btn-block">Zmień dane</button>
         <?php if (!empty($zmiana_error)): ?>
