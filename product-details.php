@@ -1,9 +1,50 @@
 <?php
-require 'db.php'; // Połączenie z bazą danych
+require 'db.php'; 
+session_start(); 
 
+$loggedIn = isset($_SESSION['user_id']);
+$userData = null;
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Zapytanie do pobrania produktu
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tresc_opinii'])) {
+    $tresciopini = trim($_POST['tresc_opinii']);
+    $autor = "anonim"; 
+
+    if ($loggedIn) {
+        $userId = $_SESSION['user_id'];
+
+ 
+        $stmt = $conn->prepare("SELECT username FROM users WHERE id = ?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $userData = $result->fetch_assoc();
+            $autor = $userData['username'];
+        }
+    }
+
+    $data_utworzenia = date("Y-m-d H:i:s");
+
+    if (!empty($tresciopini)) {
+        $sql_opinie_dodaj = "INSERT INTO opinie (produkt_id, autor, tresc, data_utworzenia) VALUES (?, ?, ?, ?)";
+        $stmt_opinie_dodaj = $conn->prepare($sql_opinie_dodaj);
+        $stmt_opinie_dodaj->bind_param("isss", $id, $autor, $tresciopini, $data_utworzenia);
+
+        if ($stmt_opinie_dodaj->execute()) {
+            echo "Opinia została dodana pomyślnie.";
+            header("Location: " . $_SERVER['REQUEST_URI']);
+            exit; 
+        } else {
+            echo "Błąd podczas dodawania opinii.";
+        }
+    } else {
+        echo "Treść opinii nie może być pusta.";
+    }
+}
+
 $sql = "SELECT * FROM products WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
@@ -16,20 +57,22 @@ if ($result->num_rows > 0) {
     echo "Produkt nie został znaleziony.";
     exit;
 }
-// Zapytanie do pobrania zdjęć
+
+
 $sql_zdjecia = "SELECT * FROM zdjecia_opis WHERE produkt_id = ?";
 $stmt_zdjecia = $conn->prepare($sql_zdjecia);
 $stmt_zdjecia->bind_param("i", $id);
 $stmt_zdjecia->execute();
 $result_zdjecia = $stmt_zdjecia->get_result();
 
-// Zapytanie do pobrania opinii
+
 $sql_opinie = "SELECT * FROM opinie WHERE produkt_id = ? ORDER BY data_utworzenia DESC";
 $stmt_opinie = $conn->prepare($sql_opinie);
 $stmt_opinie->bind_param("i", $id);
 $stmt_opinie->execute();
 $result_opinie = $stmt_opinie->get_result();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -38,6 +81,11 @@ $result_opinie = $stmt_opinie->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $product['name']; ?></title>
     <link rel="stylesheet" href="style.css">
+  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="script.js" defer></script>
     <link rel="stylesheet" href="style_produkt.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
 
@@ -86,31 +134,35 @@ $result_opinie = $stmt_opinie->get_result();
 
 
 
+<div class="product-reviews">
+    <h3>Opinie</h3>
 
-        <div class="product-reviews">
-            <h3>Opinie</h3>
-            <?php if ($result_opinie->num_rows > 0): ?>
-                <?php while ($opinia = $result_opinie->fetch_assoc()): ?>
-                    <div class="review">
-                        <strong><?php echo htmlspecialchars($opinia['autor']); ?></strong> - <em><?php echo $opinia['data_utworzenia']; ?></em>
-                        <p><?php echo htmlspecialchars($opinia['tresc']); ?></p>
-                    </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <p>Brak opinii dla tego produktu.</p>
-            <?php endif; ?>
+    <h4>Dodaj Opinię</h4>
+    <form method="POST">
+        <div class="form-group">
+            <label for="opinia">Dodaj opinię</label>
+            <input type="text" class="form-control" name="tresc_opinii" placeholder="Wprowadź opinię">
         </div>
+        <button type="submit" class="btn btn-primary">Wyślij opinię</button>
+    </form>
+
+    <h4>Dotychczasowe Opinie</h4>
+    <?php if ($result_opinie->num_rows > 0): ?>
+        <?php while ($opinia = $result_opinie->fetch_assoc()): ?>
+            <div class="review">
+                <strong><?php echo htmlspecialchars($opinia['autor']); ?></strong> - <em><?php echo $opinia['data_utworzenia']; ?></em>
+                <p><?php echo htmlspecialchars($opinia['tresc']); ?></p>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p>Brak opinii dla tego produktu.</p>
+    <?php endif; ?>
+</div>
     </main>
 
     <footer>
         <p>&copy; 2024 Sklep Motocyklowy</p>
     </footer>
-    <!-- Modal -->
-<div id="myModal" class="modal">
-    <span class="close">&times;</span>
-    <img class="modal-content" id="img01">
-    <div id="caption"></div>
-</div>
 
     <script src="script.js"></script>
 
