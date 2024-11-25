@@ -6,9 +6,9 @@ require 'db.php';
 $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
 $userData = null;
-$isAdmin = false; // Domyślna wartość
+$isAdmin = false; 
 
-// Pobieranie danych użytkownika
+
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
     $stmt = $pdo->prepare(
@@ -17,31 +17,29 @@ if ($loggedIn) {
     $stmt->execute([$userId]);
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Ustawienie zmiennej $isAdmin na podstawie danych z bazy
+
     if ($userData) {
         $isAdmin = (bool) $userData['czy_admin'];
     }
 }
-// Obsługa wylogowania
+
 if (isset($_POST['logout'])) {
-    session_unset(); // Usuwa wszystkie zmienne sesji
-    session_destroy(); // Kończy sesję
-    header('Location: index.php'); // Przekierowanie na stronę główną
+    session_unset(); 
+    session_destroy(); 
+    header('Location: index.php');
     exit();
 }
-// Inicjalizacja koszyka, jeśli nie istnieje
+
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-// Funkcja dodawania produktu do koszyka
 if (isset($_POST['add_to_cart'])) {
     $product_id = $_POST['product_id'];
     $product_name = $_POST['product_name'];
     $product_price = $_POST['product_price'];
     $quantity = $_POST['quantity'];
 
-    // Sprawdzanie, czy produkt już istnieje w koszyku
     $found = false;
     foreach ($_SESSION['cart'] as &$item) {
         if ($item['id'] == $product_id) {
@@ -62,7 +60,6 @@ if (isset($_POST['add_to_cart'])) {
     exit();
 }
 
-// Funkcja usuwania produktu z koszyka
 if (isset($_POST['remove_from_cart'])) {
     $product_id = $_POST['product_id'];
     $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) use (
@@ -73,7 +70,7 @@ if (isset($_POST['remove_from_cart'])) {
     header('Location: index.php');
     exit();
 }
-//ZMIANA DANYCH
+
 $zmiana_error = '';
 $zmiana_success = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
@@ -84,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
     $zmiana_error = '';
     $zmiana_success = '';
 
-    // Walidacja
+
     if (
         empty($new_username) ||
         empty($new_password) ||
@@ -99,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
     } elseif (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
         $zmiana_error = 'Nieprawidłowy adres e-mail.';
     } else {
-        // Sprawdzenie czy nazwa użytkownika jest zajęta
+
         $stmt = $pdo->prepare(
             'SELECT id FROM users WHERE username = :username AND id != :user_id'
         );
@@ -112,13 +109,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
         if ($user) {
             $zmiana_error = 'Użytkownik o tej nazwie już istnieje.';
         } else {
-            // Haszowanie hasła
             $new_hashed_password = password_hash(
                 $new_password,
                 PASSWORD_DEFAULT
             );
 
-            // Aktualizacja danych
+      
             $stmt = $pdo->prepare('
                 UPDATE users 
                 SET username = :username, password_hash = :password, email = :email 
@@ -185,14 +181,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
                     <li><a href="login.php">Zaloguj</a></li>
                 <?php endif; ?>
                 <li>
-                    <!-- Ikona koszyka -->
+       
                     <div class="cart-icon" onclick="toggleCart()">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-count"><?= count(
                             $_SESSION['cart']
                         ) ?></span>
                     </div>
-                    <!-- Zawartość koszyka -->
+             
                     <div id="cart-content" class="cart-content">
                         <h2>Twój Koszyk</h2>
                         <?php if (!empty($_SESSION['cart'])): ?>
@@ -246,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
             <section class="product-list">
                 <h2>Dostępne Motocykle</h2>
                 <div id="products">
-                    <!-- Produkty zostaną załadowane tutaj -->
+                
                 </div>
             </section>
         </div>
