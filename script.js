@@ -16,9 +16,8 @@ function fetchProducts(query) {
     .catch((error) => console.error('Error fetching products:', error))
 }
 function toggleCart() {
-  const cartContent = document.getElementById('cart-content')
-  cartContent.style.display =
-    cartContent.style.display === 'block' ? 'none' : 'block'
+  const cart = document.getElementById('cart-content');
+  cart.style.display = cart.style.display === 'block' ? 'none' : 'block';
 }
 
 window.onclick = function (event) {
@@ -69,8 +68,6 @@ function displayProducts(products) {
                 <input type="hidden" name="product_id" value="${product.id}">
                 <input type="hidden" name="product_name" value="${product.name}">
                 <input type="hidden" name="product_price" value="${product.price}">
-                <label for="quantity-${product.id}">Ilość:</label>
-                <input type="number" name="quantity" id="quantity-${product.id}" value="1" min="1" required>
                 <button type="submit" name="add_to_cart" class="add-to-cart-btn">Dodaj do koszyka</button>
             </form>
             <button onclick="location.href='product-details.php?id=${product.id}'">Zobacz szczegóły</button>

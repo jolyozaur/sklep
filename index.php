@@ -38,12 +38,10 @@ if (isset($_POST['add_to_cart'])) {
     $product_id = $_POST['product_id'];
     $product_name = $_POST['product_name'];
     $product_price = $_POST['product_price'];
-    $quantity = $_POST['quantity'];
 
     $found = false;
     foreach ($_SESSION['cart'] as &$item) {
         if ($item['id'] == $product_id) {
-            $item['quantity'] += $quantity;
             $found = true;
             break;
         }
@@ -52,8 +50,7 @@ if (isset($_POST['add_to_cart'])) {
         $_SESSION['cart'][] = [
             'id' => $product_id,
             'name' => $product_name,
-            'price' => $product_price,
-            'quantity' => $quantity,
+            'price' => $product_price
         ];
     }
     header('Location: index.php');
@@ -62,9 +59,7 @@ if (isset($_POST['add_to_cart'])) {
 
 if (isset($_POST['remove_from_cart'])) {
     $product_id = $_POST['product_id'];
-    $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) use (
-        $product_id
-    ) {
+    $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) use ($product_id) {
         return $item['id'] != $product_id;
     });
     header('Location: index.php');
@@ -182,39 +177,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
                 <?php endif; ?>
                 <li>
        
-                    <div class="cart-icon" onclick="toggleCart()">
+                <div class="cart-icon" onclick="toggleCart()">
                         <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count"><?= count(
-                            $_SESSION['cart']
-                        ) ?></span>
+                        <span class="cart-count"><?= count($_SESSION['cart']) ?></span>
                     </div>
-             
                     <div id="cart-content" class="cart-content">
                         <h2>Twój Koszyk</h2>
                         <?php if (!empty($_SESSION['cart'])): ?>
                             <ul>
                                 <?php foreach ($_SESSION['cart'] as $item): ?>
                                     <li>
-                                        <?= htmlspecialchars(
-                                            $item['name']
-                                        ) ?> (<?= $item['quantity'] ?>)
-                                        - <?= $item['price'] ?> zł
+                                        <?= htmlspecialchars($item['name']) ?> - <?= $item['price'] ?> zł
                                         <form method="POST" action="index.php" style="display:inline;">
-                                            <input type="hidden" name="product_id" value="<?= htmlspecialchars(
-                                                $item['id']
-                                            ) ?>">
+                                            <input type="hidden" name="product_id" value="<?= htmlspecialchars($item['id']) ?>">
                                             <button type="submit" name="remove_from_cart" class="remove-btn">Usuń</button>
                                         </form>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
-                            <p>Łączna kwota: 
-                                <?= array_reduce(
-                                    $_SESSION['cart'],
-                                    fn($sum, $item) => $sum +
-                                        $item['price'] * $item['quantity'],
-                                    0
-                                ) ?> zł
+                            <p>Łączna kwota:
+                                <?= array_reduce($_SESSION['cart'], fn($sum, $item) => $sum + $item['price'], 0) ?> zł
                             </p>
                         <?php else: ?>
                             <p>Koszyk jest pusty.</p>

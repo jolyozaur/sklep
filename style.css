@@ -9,13 +9,15 @@ body {
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
 }
-
+.cart-content{
+  color:black;
+}
 .cart {
   margin-top: 20px;
   padding: 20px;
   background-color: #2a2a2a;
   border-radius: 10px;
-  color: #eaeaea;
+  color: #000000;
 }
 
 .cart table {
