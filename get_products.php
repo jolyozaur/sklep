@@ -1,11 +1,6 @@
 <?php
 header('Content-Type: application/json');
-
-$host = 'localhost'; 
-$db = 'm10280_motocykle_skep'; 
-$user = 'root'; 
-$pass = '';
-
+include 'db.php';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -39,3 +34,4 @@ $results = $stmt->fetchAll();
 
 echo json_encode($results);
 ?>
+
