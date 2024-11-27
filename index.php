@@ -339,29 +339,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
       <?php endif; ?>
 
 
-<?php 
-$currentOrders = [
-    [
-      'id' => '12345',
-      'data' => '2024-11-25',
-      'status' => 'W realizacji',
-    ],
-    [
-      'id' => '12347',
-      'data' => '2024-11-26',
-      'status' => 'Przygotowywane',
-    ],
-  ];
-  
-  $completedOrders = [
-    [
-      'id' => '12346',
-      'data' => '2024-11-20',
-      'status' => 'Zakończone',
-    ],
-  ];
-  
-  ?>
+<?php
+/*
+$user_id = $_SESSION['user_id'];
+  $sql = "SELECT * FROM orders WHERE user_id = ?";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$user_id]);
+$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  $sql = "SELECT * FROM orders WHERE user_id = ? and status = 'W realizacji'";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$user_id]);
+$currentOrders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$nr_zamowienia = $currentOrders[0]['id'];
+$sql2 = "SELECT * FROM order_item WHERE order_id = ? ";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$nr_zamowienia]);
+$szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
+!>>*/?>
+ 
 
 
 <?php if (!empty($currentOrders)): ?>
@@ -374,10 +371,14 @@ $currentOrders = [
             </div>
             <div class="info_block">
               <span class="info_label"><strong>Data:</strong></span>
-              <span class="info_value"><?= htmlspecialchars($order['data']) ?></span>
+              <span class="info_value"><?= htmlspecialchars($order['order_date']) ?></span>
             </div>
             <div class="info_block">
               <span class="info_label"><strong>Status:</strong></span>
+              <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
+            </div>
+            <div class="info_block">
+              <span class="info_label"><strong>produkt</strong></span>
               <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
             </div>
             <hr style="border-color: rgba(255, 255, 255, 0.2);">
