@@ -543,7 +543,7 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <label for="new_phone">Numer telefonu</label>
                 <input type="text" class="form-control" id="new_phone" name="new_phone" placeholder="Wprowadź numer telefonu (np. +48 123 456 789)" required>
             </div>
-            <input type="hidden" name="user_id" style="hidden" value="<?= htmlspecialchars($_SESSION['user_id']) ?>">
+            <input type="hidden" name="user_id"  value="<?= htmlspecialchars($_SESSION['user_id']) ?>">
     <button type="submit" name="add_address" class="btn btn-danger btn-block">Dodaj adres</button>
    
 
