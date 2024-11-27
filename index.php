@@ -282,68 +282,130 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
         <p>&copy; 2024 Sklep Motocyklowy</p>
     </footer>
 
-    <div id="accountModal" class="modal">
-    
+<div id="accountModal" class="modal_custom">
 
-    <div class="modal-content" style="background-color:transparent;">
+            <span class="close_custom" onclick="document.getElementById('accountModal').style.display='none'">&times;</span>
+
+        <div class="modal_custom-content">
    
+         <div class="container_dane_custom">
+      
+         <div class="karta_dane">
         <h2>Informacje o koncie</h2>
-        <?php if ($userData): ?>
-            <table>
-                <tr>
-                    <td><strong>Login:</strong></td>
-                    <td><?= htmlspecialchars($userData['username']) ?></td>
-                </tr>
-                <tr>
-                    <td><strong>Email:</strong></td>
-                    <td><?= htmlspecialchars($userData['email']) ?></td>
-                </tr>
-                <tr>
-                    <td><strong>Hasło:</strong></td>
-                    <td>**zabezpieczone**  
-                    </td>
+        <div class="info_block">
+          <span class="info_label"><strong>Login:</strong></span>
+          <span class="info_value"><?= htmlspecialchars($userData['username']) ?></span>
+        </div>
+        <div class="info_block">
+          <span class="info_label"><strong>Email:</strong></span>
+          <span class="info_value"><?= htmlspecialchars($userData['email']) ?></span>
+        </div>
+        <div class="info_block">
+          <span class="info_label"><strong>Hasło:</strong></span>
+          <span class="info_value">**zabezpieczone**</span>
+          <br></br>
+          <form method="POST" action="index.php"><a class="btn btn-secondary " name="zmiana_hasla" onclick="openpasswordModal()"> Zmień Dane</a></form>
+        </div>
+      </div>
 
-                </tr>
-                
-    
-    
-        <tr>
-            <th><strong>Adres</strong></th>
-        </tr>
-    </thead>
-    <?php if (!empty($useradres)): ?>
-        <tr>
-            <td><strong>Imię</strong></td>
-            <td><?= htmlspecialchars($useradres['Imie']) ?></td>
-        </tr>
-        <tr>
-            <td><strong>Nazwisko</strong></td>
-            <td><?= htmlspecialchars($useradres['Nazwisko']) ?></td>
-        </tr>
-        <tr>
-            <td><strong>Ulica</strong></td>
-            <td><?= htmlspecialchars($useradres['ulica']) ?></td>
-        </tr>
-        <tr>
-            <td><strong>Miasto</strong></td>
-            <td><?= htmlspecialchars($useradres['miasto']) ?></td>
-        </tr>
-        <tr>
-            <td><strong>Kod pocztowy</strong></td>
-            <td><?= htmlspecialchars($useradres['kod']) ?></td>
-        </tr>
-        <tr>
-            <td><strong>Nr telefonu</strong></td>
-            <td><?= htmlspecialchars($useradres['tel']) ?></td>
-        </tr>
-    </tbody>
+      <?php if (!empty($useradres)): ?>
+        <div class="karta_dane">
+          <h2>Informacje o adresie</h2>
+          <div class="info_block">
+            <span class="info_label"><strong>Imię i nazwisko:</strong></span>
+            <span class="info_value"><?= htmlspecialchars($useradres['Imie']) ?> <?= htmlspecialchars($useradres['Nazwisko']) ?></span>
+          </div>
+          <div class="info_block">
+            <span class="info_label"><strong>Adres:</strong></span>
+            <span class="info_value">Ul. <?= htmlspecialchars($useradres['ulica']) ?></span>
+          </div>
+          <div class="info_block">
+            <span class="info_label"><strong>Kod pocztowy:</strong></span>
+            <span class="info_value"><?= htmlspecialchars($useradres['kod']) ?></span>
+          </div>
+          <div class="info_block">
+            <span class="info_label"><strong>Miasto:</strong></span>
+            <span class="info_value"><?= htmlspecialchars($useradres['miasto']) ?></span>
+          </div>
+          <div class="info_block">
+            <span class="info_label"><strong>Numer telefonu:</strong></span>
+            <span class="info_value"><?= htmlspecialchars($useradres['tel']) ?></span>
+          </div>
+        </div>
+      <?php endif; ?>
 
-<?php endif; ?>
+
+
+
+<?php if (!empty($currentOrders)): ?>
+        <div class="karta_dane">
+          <h2>Aktualne zamówienia</h2>
+          <?php foreach ($currentOrders as $order): ?>
+            <div class="info_block">
+              <span class="info_label"><strong>ID Zamówienia:</strong></span>
+              <span class="info_value"><?= htmlspecialchars($order['id']) ?></span>
+            </div>
+            <div class="info_block">
+              <span class="info_label"><strong>Data:</strong></span>
+              <span class="info_value"><?= htmlspecialchars($order['data']) ?></span>
+            </div>
+            <div class="info_block">
+              <span class="info_label"><strong>Status:</strong></span>
+              <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
+            </div>
+            <hr style="border-color: rgba(255, 255, 255, 0.2);">
+          <?php endforeach; ?>
+        </div>
+      <?php else: ?>
+        <div class="karta_dane">
+          <h2>Aktualne zamówienia</h2>
+          <p style="text-align: center; color: #f05454;">Brak aktualnych zamówień.</p>
+        </div>
+      <?php endif; ?>
+
+      
+      <?php if (!empty($completedOrders)): ?>
+        <div class="karta_dane">
+          <h2>Zakończone zamówienia</h2>
+          <?php foreach ($completedOrders as $order): ?>
+            <div class="info_block">
+              <span class="info_label"><strong>ID Zamówienia:</strong></span>
+              <span class="info_value"><?= htmlspecialchars($order['id']) ?></span>
+            </div>
+            <div class="info_block">
+              <span class="info_label"><strong>Data:</strong></span>
+              <span class="info_value"><?= htmlspecialchars($order['data']) ?></span>
+            </div>
+            <div class="info_block">
+              <span class="info_label"><strong>Status:</strong></span>
+              <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
+            </div>
+            <hr style="border-color: rgba(255, 255, 255, 0.2);">
+          <?php endforeach; ?>
+        </div>
+      <?php else: ?>
+        <div class="karta_dane">
+          <h2>Zakończone zamówienia</h2>
+          <p style="text-align: center; color: #f05454;">Brak zakończonych zamówień.</p>
+        </div>
+
+        
+      <?php endif; ?>
+
+
+
+    </div>
+    
+ 
+
+
+
 
 
     </table>
-            <form method="POST" action="index.php"><a class="btn btn-secondary " name="zmiana_hasla" onclick="openpasswordModal()"> Zmień Dane</a></form>
-            <?php if ($useradres == null) echo'  <form method="POST" action="index.php"><a class="btn btn-secondary " name="dodaj_adres" onclick="openadresModal()" > Dodaj adres</a></form>
+    <div class="karta_dane">
+            
+            <?php if ($useradres == null):?>  <form method="POST" action="index.php"><a class="btn btn-secondary " name="dodaj_adres" onclick="openadresModal()" > Dodaj adres</a></form>
                '; ?>
           
         <?php endif; ?>
@@ -364,7 +426,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
     </section>
         <button class="close-modal-btn" id="close" onclick="closeModal()">Zamknij</button>
     </div>
-  
+        </div>
 
         <div id="passwordModal" class="modal">
         <div class="modal-content" style="background-color:transparent;">
@@ -417,9 +479,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
     </div>
         </div>
 
-
-
-</div>
+        </div>
+      
 
 
 <div id="adresModal" class="modal">

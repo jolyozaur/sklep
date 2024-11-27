@@ -19,6 +19,103 @@ body {
   border-radius: 10px;
   color: #000000;
 }
+/* Modal */
+.modal_custom {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Modal content */
+.modal_custom-content {
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 900px;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* Kontener danych */
+.container_dane_custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Stylizacja kart */
+.karta_dane {
+  background-color: #1e1e1e;
+  color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 48%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Nagłówki */
+.karta_dane h2 {
+  text-align: center;
+  color: #f05454;
+  margin-bottom: 20px;
+}
+
+/* Tabela */
+.karta_tabela {
+  width: 100%;
+}
+
+.karta_tabela td {
+  padding: 10px 5px;
+  border-bottom: 1px solid #333;
+  color: #fff;
+}
+
+/* Bloki informacji */
+.info_block {
+  margin-bottom: 10px;
+}
+
+.info_label {
+  font-weight: bold;
+  color: #f05454;
+}
+
+.info_value {
+  margin-left: 5px;
+  color: #fff;
+}
+
+/* Przycisk zamknięcia */
+.modal_custom .close_custom {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  color: #fff;
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal_custom .close_custom:hover,
+.modal_custom .close_custom:focus {
+  color: #f05454;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 
 .cart table {
   width: 100%;
