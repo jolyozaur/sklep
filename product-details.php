@@ -140,10 +140,6 @@ $result_opinie = $stmt_opinie->get_result();
     <h4>Dodaj Opinię</h4>
     <form method="POST" action="">
         <div class="form-group">
-            <label for="autor">Imię i nazwisko</label><br>
-            <input type="text" name="autor" placeholder="Wpisz swoje imię" required><br>
-        </div>
-        <div class="form-group">
             <label for="tresc_opinii">Twoja opinia</label><br>
             <textarea name="tresc_opinii" placeholder="Wpisz opinię" required></textarea><br><br>
         </div>
