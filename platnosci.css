@@ -18,7 +18,6 @@ body {
     animation: fadeIn 0.8s ease-in-out;
 }
 
-/* Formularz */
 .form-container {
     width: 60%;
     padding: 30px;
@@ -35,14 +34,12 @@ h2 {
     font-size: 24px;
 }
 
-/* Etykieta formularza */
 .form-container .form-label {
     font-size: 16px;
     color: white;
     font-weight: bold;
 }
 
-/* Pola formularza */
 .form-container input {
     background-color: #444;
     color: white;
@@ -53,7 +50,6 @@ h2 {
     border-radius: 5px;
 }
 
-/* Przycisk formularza */
 .form-container button {
     width: 100%;
     background-color: red;
@@ -70,7 +66,6 @@ h2 {
     transform: scale(1.05);
 }
 
-/* Koszyk */
 .cart-box {
     padding: 20px;
     background-color: #f9f9f9;
@@ -89,7 +84,6 @@ h2 {
     text-align: center;
 }
 
-/* Lista produktów w koszyku */
 .cart-box .list-group {
     list-style-type: none;
     padding: 0;
@@ -109,7 +103,6 @@ h2 {
     animation: fadeInItem 0.6s ease-out forwards;
 }
 
-/* Opóźnienia animacji dla pozycji koszyka */
 .cart-box .list-group-item:nth-child(odd) {
     animation-delay: 0.2s;
 }
@@ -124,7 +117,6 @@ h2 {
     text-align: right;
 }
 
-/* Przycisk płatności */
 .cart-box .btn-red {
     width: 100%;
     background-color: red;
@@ -141,7 +133,6 @@ h2 {
     transform: scale(1.05);
 }
 
-/* Animacja fade-in */
 @keyframes fadeIn {
     0% {
         opacity: 0;
@@ -153,7 +144,6 @@ h2 {
     }
 }
 
-/* Animacja wstawiania koszyka */
 @keyframes slideInCart {
     0% {
         opacity: 0;
@@ -165,7 +155,6 @@ h2 {
     }
 }
 
-/* Animacja wstawiania elementów koszyka */
 @keyframes fadeInItem {
     0% {
         opacity: 0;
@@ -177,7 +166,6 @@ h2 {
     }
 }
 
-/* Animacja przesuwania formularza */
 @keyframes slideIn {
     0% {
         transform: translateX(100%);
@@ -189,7 +177,6 @@ h2 {
     }
 }
 
-/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -202,7 +189,6 @@ h2 {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* Modal-content */
 .modal-content {
     background-color: #fff;
     margin: 15% auto;
@@ -212,7 +198,6 @@ h2 {
     max-width: 600px;
 }
 
-/* Przyciski zamknięcia */
 .close {
     color: #aaa;
     float: right;
@@ -227,7 +212,6 @@ h2 {
     cursor: pointer;
 }
 
-/* Metody płatności */
 .payment-methods {
     display: flex;
     justify-content: space-around;
@@ -262,7 +246,6 @@ h2 {
     margin-bottom: 10px;
 }
 
-/* Responsywność */
 @media (max-width: 768px) {
     .cart-box {
         padding: 15px;
@@ -276,12 +259,9 @@ h2 {
         font-size: 16px;
     }
 
-    /* Zmniejszenie rozmiaru formularza na mniejszych ekranach */
     .form-container {
         width: 100%;
     }
-
-    /* Poprawienie układu metod płatności na małych ekranach */
     .payment-methods {
         flex-direction: column;
     }
