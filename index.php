@@ -311,7 +311,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
           <form method="POST" action="index.php"><a class="btn btn-secondary " name="zmiana_hasla" onclick="openpasswordModal()"> Zmień Dane</a></form>
         </div>
       </div>
-
+      <?php if ($useradres == null):?><div class="karta_dane"><h2>informacje o adresie</h2>  <form method="POST" action="index.php"><a class="btn btn-danger " name="dodaj_adres" onclick="openadresModal()" > Dodaj adres</a></form></div>
+        <?php endif; ?>
       <?php if (!empty($useradres)): ?>
         <div class="karta_dane">
           <h2>Informacje o adresie</h2>
@@ -431,13 +432,12 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     </table>
-    <?php if ($useradres == null):?>  <form method="POST" action="index.php"><a class="btn btn-secondary " name="dodaj_adres" onclick="openadresModal()" > Dodaj adres</a></form>
-        '; ?>
+    
     
             
            
           
-        <?php endif; ?>
+       
         <?php if ($isAdmin === true) {
             echo ' <div class="karta_dane">
         <section class="admin-panel">
@@ -481,7 +481,7 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <small id="new_confirmPasswordHelp" class="form-text confirm-password-check">Hasła się nie zgadzają.</small>
         </div>
         <div class="form-group">
-    <label for="email">Adres e-mail</label>
+    <label for="new_email">Adres e-mail</label>
     <input type="email" class="form-control" id="new_email" name="new_email" required placeholder="Wprowadź adres e-mail" value="<?php echo $userData[
         'email'
     ]; ?>" required>
@@ -514,7 +514,7 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <div id="adresModal" class="modal">
     <div class="modal-content" style="background-color:transparent;">
-        <span class="close" onclick="closeAddressModal()">&times;</span>
+        <span class="close" onclick="closeadresModal()">&times;</span>
         <h2>Dodaj adres</h2>
         <form method="POST" action="index.php" class="form-container" onsubmit="return validateAddressForm()">
         <div class="form-group">
@@ -543,9 +543,9 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <label for="new_phone">Numer telefonu</label>
                 <input type="text" class="form-control" id="new_phone" name="new_phone" placeholder="Wprowadź numer telefonu (np. +48 123 456 789)" required>
             </div>
-            <input type="text" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id']) ?>">
-    <button type="submit" name="add_address" class="btn btn-primary btn-block">Dodaj adres</button>
-    <button type="close" name="adresModal" class="btn btn-primary btn-block" onclick="closeAddressModal()">Zamknij</button>
+            <input type="hidden" name="user_id" style="hidden" value="<?= htmlspecialchars($_SESSION['user_id']) ?>">
+    <button type="submit" name="add_address" class="btn btn-danger btn-block">Dodaj adres</button>
+   
 
             <?php if (!empty($address_error)): ?>
                 <div class="alert alert-danger" role="alert">

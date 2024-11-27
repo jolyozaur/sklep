@@ -143,7 +143,7 @@ $result_opinie = $stmt_opinie->get_result();
             <label for="opinia">Dodaj opinię</label>
             <input type="text" class="form-control" name="tresc_opinii" placeholder="Wprowadź opinię">
         </div>
-        <button type="submit" class="btn btn-primary">Wyślij opinię</button>
+        <button type="submit" class="btn btn-danger">Wyślij opinię</button>
     </form>
 
     <h4>Dotychczasowe Opinie</h4>
