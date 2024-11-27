@@ -232,17 +232,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
                     <div id="cart-content" class="cart-content">
                         <h2>Twój Koszyk</h2>
                         <?php if (!empty($_SESSION['cart'])): ?>
-                            <ul>
+                            <table>
                                 <?php foreach ($_SESSION['cart'] as $item): ?>
                                     <li>
-                                        <?= htmlspecialchars($item['name']) ?> - <?= $item['price'] ?> zł
-                                        <form method="POST" action="index.php" style="display:inline;">
+                                        <?= htmlspecialchars($item['name']);echo "<br>" ; ?> <a> <?= $item['price'] ?> zł</a>
+                                        <form method="POST" action="index.php">
                                             <input type="hidden" name="product_id" value="<?= htmlspecialchars($item['id']) ?>">
                                             <button type="submit" name="remove_from_cart" class="remove-btn">Usuń</button>
                                         </form>
                                     </li>
                                 <?php endforeach; ?>
-                            </ul>
+                                </table>
                             <p>Łączna kwota:
                                 <?= array_reduce($_SESSION['cart'], fn($sum, $item) => $sum + $item['price'], 0) ?> zł
                             </p>
