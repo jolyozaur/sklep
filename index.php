@@ -339,7 +339,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
       <?php endif; ?>
 
 
-<?php 
+<?php
+/*
 $user_id = $_SESSION['user_id'];
   $sql = "SELECT * FROM orders WHERE user_id = ?";
 $stmt = $pdo->prepare($sql);
@@ -356,7 +357,7 @@ $sql2 = "SELECT * FROM order_item WHERE order_id = ? ";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$nr_zamowienia]);
 $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
+!>>*/?>
  
 
 
