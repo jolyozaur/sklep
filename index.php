@@ -16,6 +16,9 @@ if ($loggedIn) {
     );
     $stmt->execute([$userId]);
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare("SELECT  * FROM addresses WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $useradres = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
     if ($userData) {
@@ -129,6 +132,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
             } else {
                 $zmiana_error = 'Wystąpił problem podczas aktualizacji danych.';
             }
+        }
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
+    $imie = htmlspecialchars(trim($_POST['new_name']));
+    $nazwisko = htmlspecialchars(trim($_POST['new_surname']));
+    $stmt->bindParam(':imie', $imie);
+    $stmt->bindParam(':nazwisko', $nazwisko);
+    $ulica = htmlspecialchars(trim($_POST['new_street']));
+    $miasto = htmlspecialchars(trim($_POST['new_city']));
+    $kod = htmlspecialchars(trim($_POST['new_postcode']));
+    $tel = htmlspecialchars(trim($_POST['new_phone']));
+    $user_id = htmlspecialchars(trim($_POST['user_id']));
+
+    if (!preg_match('/^\d{2}-\d{3}$/', $kod)) {
+        $address_error = "Nieprawidłowy format kodu pocztowego.";
+    } elseif (!preg_match('/^(\+?\d{1,3})? ?\d{3} ?\d{3} ?\d{3}$/', $tel)) {
+        $address_error = "Nieprawidłowy format numeru telefonu.";
+    } else {
+
+        try {
+          
+            $stmt = $pdo->prepare("
+                   INSERT INTO addresses (imie, nazwisko, ulica, miasto, kod, tel, user_id )
+            VALUES (:imie, :nazwisko, :ulica, :miasto, :kod,  :tel, :user_id)
+            ");
+
+     
+            $stmt->bindParam(':imie', $imie);
+            $stmt->bindParam(':nazwisko', $nazwisko);
+            $stmt->bindParam(':ulica', $ulica);
+            $stmt->bindParam(':miasto', $miasto);
+            $stmt->bindParam(':kod', $kod);
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':tel', $tel);
+
+            $stmt->execute();
+            header("Location: index.php"); 
+            exit();
+        
+            echo "<p>Adres został pomyślnie dodany!</p>";
+        } catch (PDOException $e) {
+           
+            $address_error = "Błąd bazy danych: " . $e->getMessage();
         }
     }
 }
@@ -256,9 +304,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
                     </td>
 
                 </tr>
-            </table>
-            <form method="POST" action="index.php"><a class="btn btn-secondary " name="zmiana_hasla" onclick="openpasswordModal()"> Zmień Dane</a></form>
+                
     
+    
+        <tr>
+            <th><strong>Adres</strong></th>
+        </tr>
+    </thead>
+    <?php if (!empty($useradres)): ?>
+        <tr>
+            <td><strong>Imię</strong></td>
+            <td><?= htmlspecialchars($useradres['Imie']) ?></td>
+        </tr>
+        <tr>
+            <td><strong>Nazwisko</strong></td>
+            <td><?= htmlspecialchars($useradres['Nazwisko']) ?></td>
+        </tr>
+        <tr>
+            <td><strong>Ulica</strong></td>
+            <td><?= htmlspecialchars($useradres['ulica']) ?></td>
+        </tr>
+        <tr>
+            <td><strong>Miasto</strong></td>
+            <td><?= htmlspecialchars($useradres['miasto']) ?></td>
+        </tr>
+        <tr>
+            <td><strong>Kod pocztowy</strong></td>
+            <td><?= htmlspecialchars($useradres['kod']) ?></td>
+        </tr>
+        <tr>
+            <td><strong>Nr telefonu</strong></td>
+            <td><?= htmlspecialchars($useradres['tel']) ?></td>
+        </tr>
+    </tbody>
+
+<?php endif; ?>
+
+
+    </table>
+            <form method="POST" action="index.php"><a class="btn btn-secondary " name="zmiana_hasla" onclick="openpasswordModal()"> Zmień Dane</a></form>
+            <?php if ($useradres == null) echo'  <form method="POST" action="index.php"><a class="btn btn-secondary " name="dodaj_adres" onclick="openadresModal()" > Dodaj adres</a></form>
+               '; ?>
+          
         <?php endif; ?>
         <?php if ($isAdmin === true) {
             echo '
@@ -335,14 +422,87 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
 </div>
 
 
+<div id="adresModal" class="modal">
+    <div class="modal-content" style="background-color:transparent;">
+        <span class="close" onclick="closeAddressModal()">&times;</span>
+        <h2>Dodaj adres</h2>
+        <form method="POST" action="index.php" class="form-container" onsubmit="return validateAddressForm()">
+        <div class="form-group">
+                <label for="new_street">Imię</label>
+                <input type="text" class="form-control" id="new_name" name="new_name" placeholder="Wprowadź Imię" required>
+            </div>
+            <div class="form-group">
+                <label for="new_street">Nazwisko</label>
+                <input type="text" class="form-control" id="new_surname" name="new_surname" placeholder="Wprowadź Nazwisko" required>
+            </div>    
+        
+        <div class="form-group">
+                <label for="new_street">Ulica</label>
+                <input type="text" class="form-control" id="new_street" name="new_street" placeholder="Wprowadź nazwę ulicy" required>
+            </div>
+            <div class="form-group">
+                <label for="new_city">Miasto</label>
+                <input type="text" class="form-control" id="new_city" name="new_city" placeholder="Wprowadź nazwę miasta" required>
+            </div>
+            <div class="form-group">
+                <label for="new_postcode">Kod pocztowy</label>
+                <input type="text" class="form-control" id="new_postcode" name="new_postcode" placeholder="Wprowadź kod pocztowy (np. 00-123)" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="new_phone">Numer telefonu</label>
+                <input type="text" class="form-control" id="new_phone" name="new_phone" placeholder="Wprowadź numer telefonu (np. +48 123 456 789)" required>
+            </div>
+            <input type="text" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id']) ?>">
+    <button type="submit" name="add_address" class="btn btn-primary btn-block">Dodaj adres</button>
+    <button type="close" name="adresModal" class="btn btn-primary btn-block" onclick="closeAddressModal()">DZamknij</button>
+
+            <?php if (!empty($address_error)): ?>
+                <div class="alert alert-danger" role="alert">
+                    <?= htmlspecialchars($address_error) ?>
+                </div>
+            <?php endif; ?>
+        </form>
+    </div>
+</div>
+
+
     <script>
+
+
+function validateAddressForm() {
+   
+   const postcode = document.getElementById('new_postcode').value.trim();
+   const phone = document.getElementById('new_phone').value.trim();
+
+
+   const postcodeRegex = /^\d{2}-\d{3}$/;
+   if (!postcodeRegex.test(postcode)) {
+       alert("Kod pocztowy musi być w formacie XX-XXX, np. 00-123.");
+       return false;
+   }
+
+   const phoneRegex = /^(\+?\d{1,3})? ?\d{3} ?\d{3} ?\d{3}$/;
+   if (!phoneRegex.test(phone)) {
+       alert("Numer telefonu musi być w formacie np. +48 123 456 789 lub 123456789.");
+       return false;
+   }
+
+   return true; 
+}
         function toggleAccountMenu() {
             const menu = document.getElementById('account-menu');
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
-
+        function openadresModal() {
+            document.getElementById('adresModal').style.display = "block";
+            
+        }
         function openModal() {
             document.getElementById('accountModal').style.display = "block";
+        }
+        function closeadresModal() {
+            document.getElementById('adresModal').style.display = "none";
         }
 
         function openpasswordModal() {
