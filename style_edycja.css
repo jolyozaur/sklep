@@ -1,5 +1,3 @@
-/* Globalne ustawienia stylu */
-
 .switch {
     position: relative;
     display: inline-block;
@@ -7,14 +5,12 @@
     height: 34px;
   }
   
-  /* Hide default HTML checkbox */
   .switch input {
     opacity: 0;
     width: 0;
     height: 0;
   }
   
-  /* The slider */
   .slider {
     position: absolute;
     cursor: pointer;
@@ -53,7 +49,6 @@
     transform: translateX(26px);
   }
   
-  /* Rounded sliders */
   .slider.round {
     border-radius: 34px;
   }
@@ -75,7 +70,6 @@ body {
     color: #eaeaea;
 }
 
-/* Nagłówek formularza */
 h2 {
     font-size: 2.5rem;
     color: #ff3b3f;
@@ -84,7 +78,6 @@ h2 {
     text-shadow: 1px 1px 4px rgba(255, 59, 63, 0.8);
 }
 
-/* Styl formularza */
 .container {
     max-width: 800px;
     margin: auto;
@@ -94,7 +87,6 @@ h2 {
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Stylowanie sekcji formularza */
 .form-group {
     margin-bottom: 20px;
 }
@@ -120,7 +112,6 @@ input[type="text"]:focus, input[type="number"]:focus {
     outline-color: #ff3b3f;
 }
 
-/* Przycisk zapisz zmiany */
 button[type="submit"] {
     padding: 10px 20px;
     background-color: #ff3b3f;
@@ -137,7 +128,6 @@ button[type="submit"]:hover {
     background-color: #ff6164;
 }
 
-/* Przycisk anuluj */
 .btn-secondary {
     padding: 10px 20px;
     background-color: #6c757d;
@@ -155,7 +145,6 @@ button[type="submit"]:hover {
     background-color: #5a6268;
 }
 
-/* Responsywność dla urządzeń mobilnych */
 @media (max-width: 768px) {
     .container {
         padding: 15px;

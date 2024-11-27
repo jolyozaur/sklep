@@ -1,16 +1,13 @@
 <?php
 session_start();
-include 'db.php'; // Załaduj konfigurację bazy danych
+include 'db.php'; 
 
-// Sprawdź, czy użytkownik jest zalogowany
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 
-$user_id = $_SESSION['user_id']; // ID użytkownika zalogowanego
-
-// Zapytanie do bazy danych, aby pobrać zamówienia użytkownika
+$user_id = $_SESSION['user_id']; 
 $sql = "SELECT * FROM orders WHERE user_id = ?";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$user_id]);
@@ -24,7 +21,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moje zamówienia</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Zakładając, że masz plik CSS -->
+    <link rel="stylesheet" href="styles.css"> 
 </head>
 <body>
     <header>

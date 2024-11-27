@@ -1,29 +1,21 @@
 <?php
 session_start();
 require 'db.php';
-
-// Upewnij się, że użytkownik jest zalogowany
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php'); // Przekierowanie do logowania, jeśli użytkownik nie jest zalogowany
+    header('Location: login.php'); 
     exit();
 }
 
 $userId = $_SESSION['user_id'];
-
-// Pobierz dane użytkownika z bazy
 $stmt = $pdo->prepare("SELECT * FROM addresses WHERE user_id = ?");
 $stmt->execute([$userId]);
 $address = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Jeśli brak danych adresowych, ustaw pustną wartość
 $imie = $address['Imie'] ?? '';
 $nazwisko = $address['Nazwisko'] ?? '';
 $ulica = $address['ulica'] ?? '';
 $miasto = $address['miasto'] ?? '';
 $kod = $address['kod'] ?? '';
 $tel = $address['tel'] ?? '';
-
-// Obliczanie całkowitej kwoty zamówienia z koszyka
 $totalAmount = 0;
 if (!empty($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {
@@ -81,14 +73,10 @@ if (!empty($_SESSION['cart'])) {
             <button type="button" class="btn btn-primary" id="paymentButton">Zapłać</button>
         </div>
     </form>
-
-    <!-- Modal dla wyboru metod płatności -->
     <div id="paymentModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
             <h4>Kwota do zapłaty: <?= number_format($totalAmount, 2) ?> PLN</h4>
-
-            <!-- Kafelki wyboru metod płatności -->
             <div class="payment-methods">
                 <div class="payment-method" onclick="selectPaymentMethod('Przelew')" id="paymentMethodPrzelew">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Przelewy24_logo.png" alt="Przelew" />

@@ -1,20 +1,14 @@
 <?php
 session_start();
 include 'db.php';
-
-// Sprawdzanie, czy użytkownik jest już zalogowany
-
-
 $register_error = '';
 $register_success = '';
 
-// Obsługa rejestracji
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-    $email = trim($_POST['email']); // Dodanie adresu e-mail
-    // Sprawdzenie, czy dane są poprawne
+    $email = trim($_POST['email']);
     if (empty($username) || empty($password) || empty($confirm_password)) {
         $register_error = "Wszystkie pola są wymagane.";
     } elseif ($password !== $confirm_password) {
@@ -22,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     } elseif (strlen($password) < 8) {
         $register_error = "Hasło musi mieć co najmniej 8 znaków.";
     } else {
-        // Sprawdzenie, czy użytkownik o tej nazwie już istnieje
         $stmt = $pdo->prepare("SELECT id FROM users WHERE username = :username");
         $stmt->execute(['username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -30,29 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
         if ($user) {
             $register_error = "Użytkownik o tej nazwie już istnieje.";
         } else {
-            // Haszowanie hasła
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-            // Wstawianie użytkownika do bazy danych
             $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, email) VALUES (:username, :password, :email)");
             $stmt->execute(['username' => $username, 'password' => $hashed_password, 'email' => $email]);
             
             
 
-            // Sukces rejestracji
             $register_success = "Rejestracja przebiegła pomyślnie! Zostaniesz przekierowany na stronę logowania.";
-            header("refresh:2;url=login.php"); // Automatyczne przekierowanie po 2 sekundach
+            header("refresh:2;url=login.php"); 
         }
     }
 }
-
-
-//ZMIANA DANYCH
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -70,21 +52,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
 <div class="register-container">
     <h2>Rejestracja</h2>
 
-    <!-- Wyświetlanie błędów rejestracji -->
     <?php if (!empty($register_error)): ?>
         <div class="alert alert-danger" role="alert">
             <?= htmlspecialchars($register_error) ?>
         </div>
     <?php endif; ?>
 
-    <!-- Wyświetlanie sukcesu rejestracji -->
     <?php if (!empty($register_success)): ?>
         <div class="alert alert-success" role="alert">
             <?= htmlspecialchars($register_success) ?>
         </div>
     <?php endif; ?>
 
-    <!-- Formularz rejestracji -->
     <form method="POST" action="register.php" class="form-container" onsubmit="return validateForm()">
         <div class="form-group">
             <label for="username">Nazwa użytkownika</label>
@@ -107,11 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
         <button type="submit" name="register" class="btn btn-primary btn-block">Zarejestruj się</button>
     </form>
 
-    <!-- Przycisk do logowania -->
     <a href="login.php" class="btn btn-secondary btn-block mt-3">Powrót do logowania</a>
 </div>
 
-<!-- Walidacja po stronie klienta (frontend) -->
 <script>
     function checkPassword() {
         var password = document.getElementById('password').value;

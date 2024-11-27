@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function loadProducts() {
-  // Ładowanie wszystkich produktów bez filtracji
   fetchProducts('')
 }
 
@@ -34,7 +33,7 @@ window.onclick = function (event) {
 
 function displayProducts(products) {
   const productContainer = document.getElementById('products')
-  productContainer.innerHTML = '' // Wyczyść poprzednie produkty
+  productContainer.innerHTML = '' 
 
   products.forEach((product) => {
     const productCard = document.createElement('div')
@@ -55,7 +54,7 @@ function searchProduct() {
 }
 function displayProducts(products) {
   const productContainer = document.getElementById('products')
-  productContainer.innerHTML = '' // Wyczyść poprzednie produkty
+  productContainer.innerHTML = '' 
 
   products.forEach((product) => {
     const productCard = document.createElement('div')
@@ -76,9 +75,7 @@ function displayProducts(products) {
   })
 }
 
-// Funkcja do pobierania produktów na podstawie typu
 function filterProducts(type) {
-  // Przekazanie typu do nowego endpointu PHP
   fetch(`get_products.php?type=${type}`)
     .then((response) => response.json())
     .then((data) => {
@@ -88,35 +85,26 @@ function filterProducts(type) {
       console.error('Błąd podczas pobierania produktów:', error),
     )
 }
-
-// Funkcja do wyświetlania produktów na stronie
-
-// Pobierz modal
 var modal = document.getElementById('myModal')
 
-// Pobierz wszystkie obrazy w galerii
 var images = document.querySelectorAll('.gallery-images img')
 
-// Dla każdego obrazu dodaj zdarzenie kliknięcia
 images.forEach(function (image) {
   image.onclick = function () {
     modal.style.display = 'block'
     var modalImg = document.getElementById('img01')
     var captionText = document.getElementById('caption')
-    modalImg.src = this.src // Ustaw źródło obrazu modala
-    captionText.innerHTML = this.alt // Ustaw podpis
+    modalImg.src = this.src 
+    captionText.innerHTML = this.alt 
   }
 })
 
-// Pobierz element zamykający modal
 var span = document.getElementsByClassName('close')[0]
 
-// Kiedy użytkownik kliknie na zamknij, zamknij modal
 span.onclick = function () {
   modal.style.display = 'none'
 }
 
-// Zamknij modal, gdy użytkownik kliknie w tło
 window.onclick = function (event) {
   if (event.target == modal) {
     modal.style.display = 'none'

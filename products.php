@@ -9,15 +9,9 @@ try {
     echo json_encode(['error' => 'Connection failed: ' . $e->getMessage()]);
     exit;
 }
-
-// Pobieranie zapytania
 $query = isset($_GET['query']) ? strtolower(trim($_GET['query'])) : '';
-
-// Filtrowanie produktów
 $stmt = $pdo->prepare("SELECT * FROM products WHERE LOWER(name) LIKE :query");
 $stmt->execute(['query' => '%' . $query . '%']);
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Zwracanie wyników w formacie JSON
 echo json_encode($products);
 ?>

@@ -1,5 +1,4 @@
 <?php
-// Prosta implementacja wyszukiwania
 if (isset($_GET['query'])) {
     $query = strtolower($_GET['query']);
  

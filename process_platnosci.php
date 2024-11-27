@@ -1,14 +1,8 @@
 <?php
-// process_platnosci.php
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Pobierz dane z formularza
     $paymentMethod = htmlspecialchars($_POST['payment_method']);
     $amount = htmlspecialchars($_POST['amount']);
-
-    // Tutaj możesz podłączyć odpowiednie API do przetwarzania płatności (np. TPAY, PayPal)
-    
-    // Po zakończeniu płatności wyświetlamy potwierdzenie z animacją
+  
     echo '
     <!DOCTYPE html>
     <html lang="pl">
@@ -17,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Potwierdzenie Płatności</title>
         <style>
-            /* Styl dla modala */
             .modal {
                 display: none; /* Ukryty domyślnie */
                 position: fixed;
@@ -73,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 margin-top: 20px;
             }
 
-            /* Styl przycisku powrotu */
             .back-button {
                 display: inline-block;
                 padding: 10px 20px;
@@ -91,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 background-color: #45a049;
             }
 
-            /* Animacje */
             @keyframes fadeIn {
                 0% {
                     opacity: 0;
@@ -121,7 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </style>
     </head>
     <body>
-        <!-- Modal potwierdzenia płatności -->
         <div id="payment-success-modal" class="modal">
             <div class="modal-content">
                 <div class="checkmark-container">
@@ -134,15 +124,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p>Wybrano metodę płatności: ' . $paymentMethod . '</p>
                 <p>Kwota do zapłaty: ' . $amount . ' PLN</p>
                 
-                <!-- Przycisk powrotu do index.php -->
                 <a href="index.php" class="back-button">Powrót do strony głównej</a>
             </div>
         </div>
 
         <script>
-            // Funkcja do pokazania modala po zakończeniu płatności
             window.onload = function() {
-                // Pokaż modal
                 const modal = document.getElementById("payment-success-modal");
                 modal.style.display = "flex";
                 

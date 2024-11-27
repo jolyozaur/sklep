@@ -5,24 +5,21 @@ require 'db.php';
 $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
 $userData = null;
-$isAdmin = false; // Domyślna wartość
+$isAdmin = false; 
 $status_admina = null;
-// Pobieranie danych użytkownika
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
     $stmt = $pdo->prepare("SELECT username, email, czy_admin FROM users WHERE id = ?");
     $stmt->execute([$userId]);
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Ustawienie zmiennej $isAdmin na podstawie danych z bazy
     if ($userData) {
         $isAdmin = (bool) $userData['czy_admin'];
     }
 }
 
-// Sprawdzenie, czy użytkownik jest zalogowany jako administrator
 if ( $userData['czy_admin'] !== '1') {
-    header("Location: login.php"); // Jeśli nie, przekierowanie na stronę logowania
+    header("Location: login.php"); 
     exit;
 }
 
@@ -34,12 +31,10 @@ $pass = '';
 
 $conn = new mysqli($host, $user, $pass, $db);
 
-// Sprawdzenie połączenia
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Pobieranie danych o produktach
 $sql = "SELECT * FROM users";
 $result = $conn->query($sql);
 ?>
@@ -51,7 +46,7 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administracyjny</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style_login_rej.css"> <!-- Używamy tego samego stylu -->
+    <link rel="stylesheet" href="style_login_rej.css"> 
 </head>    
 <style>
 .table{
