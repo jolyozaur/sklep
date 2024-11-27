@@ -110,3 +110,22 @@ window.onclick = function (event) {
     modal.style.display = 'none'
   }
 }
+document.addEventListener("DOMContentLoaded", function () {
+  // Pobieramy wszystkie przyciski o klasie 'accordion'
+  var acc = document.getElementsByClassName("accordion");
+
+  // Dodajemy event listener do każdego przycisku
+  for (var i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function () {
+          this.classList.toggle("active");  // Zmieniamy klasę (możesz dodać efekty animacji w CSS, jak zmiana koloru przycisku)
+          var panel = this.nextElementSibling;  // Panel to element zaraz po przycisku
+
+          // Jeśli panel jest widoczny, to go ukrywamy, w przeciwnym razie go pokazujemy
+          if (panel.style.display === "block") {
+              panel.style.display = "none";  // Ukrywamy
+          } else {
+              panel.style.display = "block";  // Pokazujemy
+          }
+      });
+  }
+});

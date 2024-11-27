@@ -1,16 +1,34 @@
+/* Ogólne style */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #1b1b1b; 
-    color: #eaeaea; 
+    background-color: #1b1b1b;
+    color: #eaeaea;
 }
 
+/* Nagłówek */
 header {
-    background: #333; 
-    color: #fff; 
+    background: #333;
+    color: #fff;
     padding: 10px 0;
     text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeInDown 0.6s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 nav ul {
@@ -24,27 +42,49 @@ nav ul li {
 }
 
 nav a {
-    color: #fff;     text-decoration: none;
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
 
+nav a:hover {
+    color: #ff3b3f;
+}
+
+/* Produkt */
 .product-container {
     display: flex;
     max-width: 800px;
     margin: 20px auto;
-    background-color: #2a2a2a; 
+    background-color: #2a2a2a;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
 }
 
-.product-image {
-    flex: 1;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .product-image img {
     width: 100%;
     height: auto;
     border-radius: 8px 0 0 8px;
+    transition: transform 0.3s ease;
+}
+
+.product-image img:hover {
+    transform: scale(1.05);
 }
 
 .product-details {
@@ -58,51 +98,47 @@ nav a {
 .product-details h2 {
     margin: 0;
     font-size: 1.8em;
+    color: #fff;
 }
 
 .price {
     font-size: 1.5em;
-    color: #e67e22; 
+    color: #e67e22;
     margin: 10px 0;
 }
 
 .buy-button {
-    background-color: #ff3b3f; 
+    background-color: #ff3b3f;
     color: white;
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .buy-button:hover {
-    background-color: #ff3b3f; 
+    background-color: #d93235;
+    transform: scale(1.05);
 }
 
-footer {
-    text-align: center;
-    padding: 20px 0;
-    background: #333; 
-    color: #fff; 
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
-
+/* Sekcje */
 .product-description, .product-gallery, .product-reviews {
     margin: 20px auto;
     max-width: 800px;
-    background: #2a2a2a; 
+    background: #2a2a2a;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
 }
 
 .product-description h3, .product-gallery h3, .product-reviews h3 {
     margin-top: 0;
     font-size: 1.5em;
-    color: #eaeaea; 
+    color: #eaeaea;
 }
 
 .product-description p {
@@ -124,18 +160,45 @@ footer {
     width: 100%;
     max-width: 200px;
     border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.product-reviews {
-    margin-top: 20px;
+.gallery-images img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(255, 59, 63, 0.4);
 }
 
 .review {
-    border-top: 1px solid #444; 
+    border-top: 1px solid #444;
     padding: 10px 0;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
 }
 
 .review p {
     margin: 5px 0;
-    color: #bbb; 
+    color: #bbb;
+}
+
+/* Stopka */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background: #333;
+    color: #fff;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }

@@ -137,27 +137,45 @@ $result_opinie = $stmt_opinie->get_result();
 <div class="product-reviews">
     <h3>Opinie</h3>
 
+    <!-- Sekcja dodawania opinii -->
     <h4>Dodaj Opinię</h4>
-    <form method="POST">
+    <form method="POST" action="">
         <div class="form-group">
-            <label for="opinia">Dodaj opinię</label>
-            <input type="text" class="form-control" name="tresc_opinii" placeholder="Wprowadź opinię">
+            <label for="autor">Imię i nazwisko</label><br>
+            <input type="text" name="autor" placeholder="Wpisz swoje imię" required><br>
         </div>
-        <button type="submit" class="btn btn-primary">Wyślij opinię</button>
+        <div class="form-group">
+            <label for="tresc_opinii">Twoja opinia</label><br>
+            <textarea name="tresc_opinii" placeholder="Wpisz opinię" required></textarea><br><br>
+        </div>
+        <button type="submit" class="btn btn-primary">Dodaj opinię</button><br><br>
     </form>
 
+    <!-- Sekcja z dotychczasowymi opiniami -->
     <h4>Dotychczasowe Opinie</h4>
-    <?php if ($result_opinie->num_rows > 0): ?>
-        <?php while ($opinia = $result_opinie->fetch_assoc()): ?>
-            <div class="review">
-                <strong><?php echo htmlspecialchars($opinia['autor']); ?></strong> - <em><?php echo $opinia['data_utworzenia']; ?></em>
-                <p><?php echo htmlspecialchars($opinia['tresc']); ?></p>
-            </div>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <p>Brak opinii dla tego produktu.</p>
-    <?php endif; ?>
+    <div class="reviews">
+        <?php
+        // Tutaj wstawiamy kod PHP do pobierania i wyświetlania opinii
+        $sql = "SELECT * FROM opinie WHERE produkt_id = 1 ORDER BY data_utworzenia DESC";
+        $result_opinie = $conn->query($sql);
+
+        if ($result_opinie->num_rows > 0) {
+            while ($opinia = $result_opinie->fetch_assoc()) {
+                echo "<div class='review'>";
+                echo "<strong>" . htmlspecialchars($opinia['autor']) . "</strong> - ";
+                echo "<em>" . $opinia['data_utworzenia'] . "</em>";
+                echo "<p>" . htmlspecialchars($opinia['tresc']) . "</p>";
+                echo "</div>";
+            }
+        } else {
+            echo "<p>Brak opinii dla tego produktu.</p>";
+        }
+        ?>
+    </div>
 </div>
+
+
+
     </main>
 
     <footer>
