@@ -1,9 +1,8 @@
 <?php
 session_start();
 
-// Sprawdzenie, czy użytkownik jest zalogowany jako administrator
 if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin1234') {
-    header("Location: login.php"); // Jeśli nie, przekierowanie na stronę logowania
+    header("Location: login.php"); 
     exit;
 }
 
@@ -12,7 +11,6 @@ require 'db.php';
 if (isset($_GET['id'])) {
     $userId = $_GET['id'];
 
-    // Pobieranie danych produktu
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
     $stmt->execute([$userId]);
     $userdane = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -23,16 +21,14 @@ if (isset($_GET['id'])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Pobieranie danych z formularza
     $username = $_POST['username'];
     $email = $_POST['email'];
     $czy_admin = $_POST['czy_admin'];
    
-    // Aktualizacja produktu w bazie
     $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, czy_admin = ?  WHERE id = ?");
     $stmt->execute([$username, $email, $czy_admin, $userId]);
 
-    header("Location: uzytkownicy.php"); // Przekierowanie z powrotem do panelu administracyjnego
+    header("Location: uzytkownicy.php"); 
     exit;
 }
 ?>
@@ -43,7 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edytuj Produkt</title>
-    <!-- Link do zewnętrznego pliku CSS -->
     <link rel="stylesheet" href="style_edycja.css">
 </head>
 <body>

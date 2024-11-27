@@ -37,7 +37,7 @@ body {
 
 .btn-primary {
     background-color: #e63946;
-    margin-bottom: 10px; /* Przerwa między przyciskiem logowania a rejestracji */
+    margin-bottom: 10px; 
 }
 
 .btn-primary:hover {
@@ -63,7 +63,7 @@ body {
 
 .form-control:focus {
     outline: none;
-    border-color: #e63946; /* Czerwony przy fokusie */
+    border-color: #e63946; 
     box-shadow: 0 0 5px rgba(230, 57, 70, 0.5);
 }
 .form-group {

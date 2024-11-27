@@ -1,10 +1,9 @@
 <?php
-$host = 'localhost'; // Adres serwera bazy danych
-$db = 'motocykle_skep'; // Nazwa bazy danych
-$user = 'root'; // Zmień na swoją nazwę użytkownika
-$pass = ''; // Zmień na swoje hasło
+$host = 'localhost'; 
+$db = 'motocykle_skep'; 
+$user = 'root'; 
+$pass = ''; 
 
-// Tworzenie połączenia
 $conn = new mysqli($host, $user, $pass, $db);
 
 try {

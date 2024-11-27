@@ -70,8 +70,10 @@ if (!empty($_SESSION['cart'])) {
         </div>
 
         <div class="mb-3">
-            <button type="button" class="btn btn-primary" id="paymentButton">Zapłać</button>
-        </div>
+    <button type="button" class="btn zaplace" id="paymentButton">Zapłać</button>
+    <input type="button" class="btn wstecz" value="Wstecz" onClick="history.back();" />
+</div>
+
     </form>
     <div id="paymentModal" class="modal">
         <div class="modal-content">
