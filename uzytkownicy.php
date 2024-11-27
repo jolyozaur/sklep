@@ -5,35 +5,29 @@ require 'db.php';
 $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
 $userData = null;
-$isAdmin = false; 
+$isAdmin = false;
 $status_admina = null;
+
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
     $stmt = $pdo->prepare("SELECT username, email, czy_admin FROM users WHERE id = ?");
-    $stmt->execute([$userId]);
-    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->execute([$userId]);     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($userData) {
-        $isAdmin = (bool) $userData['czy_admin'];
+
+    if ($userData && $userData['czy_admin']) {
+        $isAdmin = true;
     }
+} else {
+  
+    $userId = null;
 }
 
-if ( $userData['czy_admin'] !== '1') {
-    header("Location: login.php"); 
+if ( $isAdmin !== true) {
+    header("Location: login.php");
     exit;
 }
 
-require 'db.php';
-$host = 'localhost';
-$db = 'm10280_motocykle_skep';
-$user = 'root'; 
-$pass = '';
 
-$conn = new mysqli($host, $user, $pass, $db);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 $sql = "SELECT * FROM users";
 $result = $conn->query($sql);
@@ -46,7 +40,7 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administracyjny</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style_login_rej.css"> 
+    <link rel="stylesheet" href="style_login_rej.css">
 </head>    
 <style>
 .table{
@@ -119,3 +113,20 @@ $result = $conn->query($sql);
 <?php
 $conn->close();
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

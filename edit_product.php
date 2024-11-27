@@ -1,12 +1,32 @@
 <?php
+  
+require 'db.php';
 session_start();
+$loggedIn = isset($_SESSION['user_id']);
+$username = $loggedIn ? $_SESSION['username'] : null;
+$userData = null;
+$isAdmin = false;
+$status_admina = null;
 
-if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin1234') {
-    header("Location: login.php"); 
+if ($loggedIn) {
+    $userId = $_SESSION['user_id'];
+    $stmt = $pdo->prepare("SELECT username, email, czy_admin FROM users WHERE id = ?");
+    $stmt->execute([$userId]);     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+    if ($userData && $userData['czy_admin']) {
+        $isAdmin = true;
+    }
+} else {
+  
+    $userId = null;
+}
+
+if ( $isAdmin !== true) {
+    header("Location: login.php");
     exit;
 }
 
-require 'db.php';
 
 if (isset($_GET['id'])) {
     $productId = $_GET['id'];
@@ -28,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $pdo->prepare("UPDATE products SET name = ?, type = ?, price = ?, Opis = ? WHERE id = ?");
     $stmt->execute([$name, $type, $price, $opis, $productId]);
 
-    header("Location: admin.php"); 
+    header("Location: admin.php");
     exit;
 }
 ?>
@@ -71,3 +91,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+
