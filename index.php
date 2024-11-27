@@ -226,30 +226,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
                 <li>
        
                 <div class="cart-icon" onclick="toggleCart()">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count"><?= count($_SESSION['cart']) ?></span>
-                    </div>
-                    <div id="cart-content" class="cart-content">
-                        <h2>Twój Koszyk</h2>
-                        <?php if (!empty($_SESSION['cart'])): ?>
-                            <table>
-                                <?php foreach ($_SESSION['cart'] as $item): ?>
-                                    <li>
-                                        <?= htmlspecialchars($item['name']);echo "<br>" ; ?> <a> <?= $item['price'] ?> zł</a>
-                                        <form method="POST" action="index.php">
-                                            <input type="hidden" name="product_id" value="<?= htmlspecialchars($item['id']) ?>">
-                                            <button type="submit" name="remove_from_cart" class="remove-btn">Usuń</button>
-                                        </form>
-                                    </li>
-                                <?php endforeach; ?>
-                                </table>
-                            <p>Łączna kwota:
-                                <?= array_reduce($_SESSION['cart'], fn($sum, $item) => $sum + $item['price'], 0) ?> zł
-                            </p>
-                        <?php else: ?>
-                            <p>Koszyk jest pusty.</p>
-                        <?php endif; ?>
-                    </div>
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-count"><?= count($_SESSION['cart']) ?></span>
+</div>
+<div id="cart-content" class="cart-content">
+    <h2>Twój Koszyk</h2>
+    <?php if (!empty($_SESSION['cart'])): ?>
+        <table>
+            <?php foreach ($_SESSION['cart'] as $item): ?>
+                <li>
+                    <?= htmlspecialchars($item['name']); echo "<br>"; ?> <a> <?= $item['price'] ?> zł</a>
+                    <form method="POST" action="index.php">
+                        <input type="hidden" name="product_id" value="<?= htmlspecialchars($item['id']) ?>">
+                        <button type="submit" name="remove_from_cart" class="remove-btn">Usuń</button>
+                    </form>
+                </li>
+            <?php endforeach; ?>
+        </table>
+        <p>Łączna kwota:
+            <?= array_reduce($_SESSION['cart'], fn($sum, $item) => $sum + $item['price'], 0) ?> zł
+        </p>
+        <form method="GET" action="platnosci.php">
+            <button type="submit" class="checkout-btn">Przejdź do płatności</button>
+        </form>
+    <?php else: ?>
+        <p>Koszyk jest pusty.</p>
+    <?php endif; ?>
+</div>
+
                 </li>
             </ul>
         </nav>
