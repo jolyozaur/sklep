@@ -321,8 +321,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
             <span class="info_value"><?= htmlspecialchars($useradres['Imie']) ?> <?= htmlspecialchars($useradres['Nazwisko']) ?></span>
           </div>
           <div class="info_block">
-            <span class="info_label"><strong>Adres:</strong></span>
-            <span class="info_value">Ul. <?= htmlspecialchars($useradres['ulica']) ?></span>
+            <span class="info_label"><strong>Ulica</strong></span>
+            <span class="info_value"> <?= htmlspecialchars($useradres['ulica']) ?></span>
           </div>
           <div class="info_block">
             <span class="info_label"><strong>Kod pocztowy:</strong></span>
