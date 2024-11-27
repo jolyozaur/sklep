@@ -431,14 +431,15 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     </table>
-    <div class="karta_dane">
+    <?php if ($useradres == null):?>  <form method="POST" action="index.php"><a class="btn btn-secondary " name="dodaj_adres" onclick="openadresModal()" > Dodaj adres</a></form>
+        '; ?>
+    
             
-            <?php if ($useradres == null):?>  <form method="POST" action="index.php"><a class="btn btn-secondary " name="dodaj_adres" onclick="openadresModal()" > Dodaj adres</a></form>
-               '; ?>
+           
           
         <?php endif; ?>
         <?php if ($isAdmin === true) {
-            echo '
+            echo ' <div class="karta_dane">
         <section class="admin-panel">
        
            
@@ -446,13 +447,14 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <section class="admin-options">
           
                 <a href="uzytkownicy.php" class="btn btn-secondary" role="button">Zarządzaj użytkownikami</a>
-                <a href="admin.php" class="btn btn-secondary">Zarządzaj produktami</a>
-                <a href="zamowienia.php" class="btn btn-secondary">Przeglądaj zamówienia</a>
+                <br> </br>
+                <a href="admin.php" class="btn btn-secondary">Zarządzaj produktami</a><br> </br>
+                <a href="zamowienia.php" class="btn btn-secondary">Przeglądaj zamówienia</a><br> </br>
 
             </section>';
         } ?>
     </section>
-        <button class="close-modal-btn" id="close" onclick="closeModal()">Zamknij</button>
+      <!--  <button class="btn btn-danger close-modal-btn  " id="close" onclick="closeModal()">Zamknij</button>-->
     </div>
         </div>
 
@@ -484,7 +486,7 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
         'email'
     ]; ?>" required>
 </div>
-        <button type="submit" name="zmianadanych" class="btn btn-primary btn-block">Zmień dane</button>
+        <button type="submit" name="zmianadanych" class="btn btn-danger btn-block">Zmień dane</button>
         <?php if (!empty($zmiana_error)): ?>
         <div class="alert alert-danger" role="alert">
             <?= htmlspecialchars($zmiana_error) ?>
@@ -503,7 +505,6 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
        
-        <button class="close-modal-btn" id="close" onclick="closepasswordModal()">Zamknij</button>
     </div>
         </div>
 
@@ -544,7 +545,7 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <input type="text" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id']) ?>">
     <button type="submit" name="add_address" class="btn btn-primary btn-block">Dodaj adres</button>
-    <button type="close" name="adresModal" class="btn btn-primary btn-block" onclick="closeAddressModal()">DZamknij</button>
+    <button type="close" name="adresModal" class="btn btn-primary btn-block" onclick="closeAddressModal()">Zamknij</button>
 
             <?php if (!empty($address_error)): ?>
                 <div class="alert alert-danger" role="alert">
