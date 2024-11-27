@@ -335,6 +335,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
       <?php endif; ?>
 
 
+<?php 
+$currentOrders = [
+    [
+      'id' => '12345',
+      'data' => '2024-11-25',
+      'status' => 'W realizacji',
+    ],
+    [
+      'id' => '12347',
+      'data' => '2024-11-26',
+      'status' => 'Przygotowywane',
+    ],
+  ];
+  
+  $completedOrders = [
+    [
+      'id' => '12346',
+      'data' => '2024-11-20',
+      'status' => 'Zakończone',
+    ],
+  ];
+  
+  ?>
 
 
 <?php if (!empty($currentOrders)): ?>
@@ -480,7 +503,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
         </div>
 
         </div>
-      
+       
 
 
 <div id="adresModal" class="modal">
