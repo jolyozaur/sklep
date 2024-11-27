@@ -611,9 +611,7 @@ footer p {
   text-decoration: none;
   cursor: pointer;
 }
-#close {
-  background-color: red;
-}
+
 .modal-content table {
   width: 100%;
   border-collapse: collapse;

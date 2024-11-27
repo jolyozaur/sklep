@@ -1,10 +1,7 @@
 <?php
 session_start();
 require 'db.php';
-$host = 'localhost';
-$db = 'm10280_motocykle_skep';
-$user = 'root'; 
-$pass = '';
+
 
 $conn = new mysqli($host, $user, $pass, $db);
 

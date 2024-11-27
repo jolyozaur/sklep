@@ -137,7 +137,6 @@ $result_opinie = $stmt_opinie->get_result();
 <div class="product-reviews">
     <h3>Opinie</h3>
 
-    <!-- Sekcja dodawania opinii -->
     <h4>Dodaj Opinię</h4>
     <form method="POST" action="">
         <div class="form-group">
@@ -148,14 +147,12 @@ $result_opinie = $stmt_opinie->get_result();
             <label for="tresc_opinii">Twoja opinia</label><br>
             <textarea name="tresc_opinii" placeholder="Wpisz opinię" required></textarea><br><br>
         </div>
-        <button type="submit" class="btn btn-primary">Dodaj opinię</button><br><br>
+        <button type="submit" class="btn btn-danger">Wyślij opinię</button>
     </form>
 
-    <!-- Sekcja z dotychczasowymi opiniami -->
     <h4>Dotychczasowe Opinie</h4>
     <div class="reviews">
         <?php
-        // Tutaj wstawiamy kod PHP do pobierania i wyświetlania opinii
         $sql = "SELECT * FROM opinie WHERE produkt_id = 1 ORDER BY data_utworzenia DESC";
         $result_opinie = $conn->query($sql);
 
