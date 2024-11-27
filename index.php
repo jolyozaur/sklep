@@ -351,7 +351,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([$user_id]);
 $currentOrders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$nr_zamowienia = $currentOrders['id'];
+$nr_zamowienia = $currentOrders[0]['id'];
 $sql2 = "SELECT * FROM order_item WHERE order_id = ? ";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$nr_zamowienia]);
@@ -374,6 +374,10 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <div class="info_block">
               <span class="info_label"><strong>Status:</strong></span>
+              <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
+            </div>
+            <div class="info_block">
+              <span class="info_label"><strong>produkt</strong></span>
               <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
             </div>
             <hr style="border-color: rgba(255, 255, 255, 0.2);">
