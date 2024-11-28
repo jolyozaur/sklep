@@ -1,42 +1,32 @@
 <?php
 session_start();
-require 'db.php';
-
-require 'db.php';
+require 'db.php'; // Tutaj umieść dane do PDO.
 
 $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
-$userData = null;
 $isAdmin = false;
-$status_admina = null;
 
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
     $stmt = $pdo->prepare("SELECT username, email, czy_admin FROM users WHERE id = ?");
-    $stmt->execute([$userId]);     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
-
+    $stmt->execute([$userId]);
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($userData && $userData['czy_admin']) {
         $isAdmin = true;
     }
-} else {
-  
-    $userId = null;
 }
 
-if ( $isAdmin !== true) {
+if (!$isAdmin) {
     header("Location: login.php");
     exit;
 }
-$conn = new mysqli($host, $user, $pass, $db);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$sql = "SELECT * FROM products";
-$result = $conn->query($sql);
+$stmt = $pdo->query("SELECT * FROM products");
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -44,6 +34,7 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administracyjny</title>
+  
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style_login_rej.css">
 </head>    
@@ -66,39 +57,42 @@ $result = $conn->query($sql);
     <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>
                 
     <h3 class="dane">Lista produktów</h3><br>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nazwa</th>
-                <th>Typ</th>
-                <th>Cena</th>
-                <th>Opis</th>
-                <th>Opcje</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td>" . $row['id'] . "</td>";
-                    echo "<td>" . $row['name'] . "</td>";
-                    echo "<td>" . $row['type'] . "</td>";
-                    echo "<td>" . $row['price'] . "</td>";
-                    echo "<td>" . $row['Opis'] . "</td>";
-                    echo "<td>
-                            <a href='edit_product.php?id=" . $row['id'] . "' class='btn btn-warning'>Edytuj</a> |
-                            <a href='delete_product.php?id=" . $row['id'] . "' class='btn btn-danger'>Usuń</a>
-                          </td>";
-                    echo "</tr>";
-                }
-            } else {
-                echo "<tr><td colspan='5'>Brak produktów</td></tr>";
+   <table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nazwa</th>
+            <th>Typ</th>
+            <th>Zdjęcie podglądowe</th>
+            <th>Cena</th>
+            <th>Opis</th>
+            <th>Opcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        if (!empty($products)) {
+            foreach ($products as $row) {
+                echo "<tr>";
+                echo "<td>" . $row['id'] . "</td>";
+                echo "<td>" . $row['name'] . "</td>";
+                echo "<td>" . $row['type'] . "</td>";
+                echo "<td><img src='" . $row['image'] . "' alt='" . $row['name'] . "' style='width:100px;'></td>";
+                echo "<td>" . $row['price'] . "</td>";
+                echo "<td>" . $row['Opis'] . "</td>";
+                echo "<td>
+                        <a href='edit_product.php?id=" . $row['id'] . "' class='btn btn-warning'>Edytuj</a> |
+                        <a href='delete_product.php?id=" . $row['id'] . "' class='btn btn-danger'>Usuń</a>
+                      </td>";
+                echo "</tr>";
             }
-            ?>
-        </tbody>
-    </table>
+        } else {
+            echo "<tr><td colspan='7'>Brak produktów</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
