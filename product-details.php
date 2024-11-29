@@ -45,7 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tresc_opinii'])) {
     }
 }
 
-$sql = "SELECT * FROM products WHERE id = ?";
+$sql = "SELECT p.*, c.type 
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        WHERE p.id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -57,6 +60,7 @@ if ($result->num_rows > 0) {
     echo "Produkt nie został znaleziony.";
     exit;
 }
+
 
 
 $sql_zdjecia = "SELECT * FROM zdjecia_opis WHERE produkt_id = ?";

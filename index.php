@@ -37,36 +37,117 @@ if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
+$loggedIn = isset($_SESSION['user_id']);
+if ($loggedIn) {
+
+    $stmt = $pdo->prepare('SELECT * FROM carts WHERE user_id = ?');
+    $stmt->execute([$_SESSION['user_id']]);
+    $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  
+    $_SESSION['cart'] = [];
+    foreach ($cart_items as $item) {
+        $_SESSION['cart'][] = [
+            'id' => $item['product_id'],
+            'name' => $item['product_name'],
+            'price' => $item['product_price'],
+            'quantity' => $item['quantity']
+        ];
+    }
+} else {
+
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
+}
+
 if (isset($_POST['add_to_cart'])) {
     $product_id = $_POST['product_id'];
     $product_name = $_POST['product_name'];
     $product_price = $_POST['product_price'];
 
-    $found = false;
-    foreach ($_SESSION['cart'] as &$item) {
-        if ($item['id'] == $product_id) {
-            $found = true;
-            break;
+    if ($loggedIn) {
+
+        $stmt = $pdo->prepare('SELECT * FROM carts WHERE user_id = ? AND product_id = ?');
+        $stmt->execute([$_SESSION['user_id'], $product_id]);
+        $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($cart_item) {
+   
+            $new_quantity = $cart_item['quantity'] + 1;
+            $updateStmt = $pdo->prepare('UPDATE carts SET quantity = ? WHERE user_id = ? AND product_id = ?');
+            $updateStmt->execute([$new_quantity, $_SESSION['user_id'], $product_id]);
+        } else {
+         
+            $stmt = $pdo->prepare('INSERT INTO carts (user_id, product_id, product_name, product_price, quantity) 
+                                   VALUES (?, ?, ?, ?, ?)');
+            $stmt->execute([$_SESSION['user_id'], $product_id, $product_name, $product_price, 1]);
+        }
+
+
+        refresh_cart_session();
+    } else {
+
+        $found = false;
+        foreach ($_SESSION['cart'] as &$item) {
+            if ($item['id'] == $product_id) {
+                $item['quantity'] += 1; 
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+      
+            $_SESSION['cart'][] = [
+                'id' => $product_id,
+                'name' => $product_name,
+                'price' => $product_price,
+                'quantity' => 1
+            ];
         }
     }
-    if (!$found) {
-        $_SESSION['cart'][] = [
-            'id' => $product_id,
-            'name' => $product_name,
-            'price' => $product_price
-        ];
-    }
+
     header('Location: index.php');
     exit();
 }
 
 if (isset($_POST['remove_from_cart'])) {
     $product_id = $_POST['product_id'];
-    $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) use ($product_id) {
-        return $item['id'] != $product_id;
-    });
+
+    if ($loggedIn) {
+        $stmt = $pdo->prepare('DELETE FROM carts WHERE user_id = ? AND product_id = ?');
+        $stmt->execute([$_SESSION['user_id'], $product_id]);
+
+  
+        refresh_cart_session();
+    } else {
+
+        $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($product_id) {
+            return $item['id'] != $product_id;
+        });
+        $_SESSION['cart'] = array_values($_SESSION['cart']);
+    }
+
     header('Location: index.php');
     exit();
+}
+
+function refresh_cart_session() {
+    global $pdo;
+    $stmt = $pdo->prepare('SELECT * FROM carts WHERE user_id = ?');
+    $stmt->execute([$_SESSION['user_id']]);
+    $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $_SESSION['cart'] = [];
+    foreach ($cart_items as $item) {
+        $_SESSION['cart'][] = [
+            'id' => $item['product_id'],
+            'name' => $item['product_name'],
+            'price' => $item['product_price'],
+            'quantity' => $item['quantity']
+        ];
+    }
 }
 
 $zmiana_error = '';
@@ -227,24 +308,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
        
                 <div class="cart-icon" onclick="toggleCart()">
     <i class="fas fa-shopping-cart"></i>
-    <span class="cart-count"><?= count($_SESSION['cart']) ?></span>
+    <span class="cart-count"><?= array_sum(array_column($_SESSION['cart'], 'quantity')) ?></span> 
 </div>
+
 <div id="cart-content" class="cart-content">
     <h2>Twój Koszyk</h2>
     <?php if (!empty($_SESSION['cart'])): ?>
         <table>
             <?php foreach ($_SESSION['cart'] as $item): ?>
-                <li>
-                    <?= htmlspecialchars($item['name']); echo "<br>"; ?> <a> <?= $item['price'] ?> zł</a>
-                    <form method="POST" action="index.php">
-                        <input type="hidden" name="product_id" value="<?= htmlspecialchars($item['id']) ?>">
-                        <button type="submit" name="remove_from_cart" class="remove-btn">Usuń</button>
-                    </form>
-                </li>
+                <tr>
+                    <td><?= htmlspecialchars($item['name']); ?></td>
+                    <td><?= $item['quantity']; ?> x <?= $item['price']; ?> zł</td> 
+                    <td><?= $item['quantity'] * $item['price']; ?> zł</td> 
+                    <td>
+                        <form method="POST" action="index.php">
+                            <input type="hidden" name="product_id" value="<?= htmlspecialchars($item['id']) ?>">
+                            <button type="submit" name="remove_from_cart" class="remove-btn">Usuń</button>
+                        </form>
+                    </td>
+                </tr>
             <?php endforeach; ?>
         </table>
         <p>Łączna kwota:
-            <?= array_reduce($_SESSION['cart'], fn($sum, $item) => $sum + $item['price'], 0) ?> zł
+            <?= array_reduce($_SESSION['cart'], fn($sum, $item) => $sum + $item['price'] * $item['quantity'], 0) ?> zł 
         </p>
         <form method="GET" action="platnosci.php">
             <button type="submit" class="checkout-btn">Przejdź do płatności</button>
@@ -254,6 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
     <?php endif; ?>
 </div>
 
+
                 </li>
             </ul>
         </nav>
@@ -261,17 +348,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
 </header>
     <main>
         <div class="container">
+                <?php
+                $stmt = $pdo->query("SELECT * FROM categories");
+                $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    ?>
+
             <section class="filter-container">
-                <h2>Filtruj według kategorii:</h2>
+             <h2>Filtruj według kategorii:</h2>
                 <div class="filter-options">
-                    <button class="filter-button active" onclick="filterProducts('')">Wszystkie</button>
-                    <button class="filter-button active" onclick="filterProducts('Cruiser')" >Cruiser</button>
-                    <button class="filter-button active" onclick="filterProducts('naked')" >Naked</button>
-                    <button class="filter-button active" onclick="filterProducts('sport')">Sport</button>
-                    <button class="filter-button active" onclick="filterProducts('skuter')">Skuter</button>
-                    <button class="filter-button active" onclick="filterProducts('adventure')">Adventure</button>
-                </div>
-            </section>
+             <button class="filter-button active" onclick="filterProducts('')">Wszystkie</button>        
+            <?php foreach ($categories as $category): ?>
+                <button class="filter-button" onclick="filterProducts('<?php echo htmlspecialchars($category['type']); ?>')">
+                <?php echo htmlspecialchars($category['type']); ?>
+            </button>
+        <?php endforeach; ?>
+    </div>
+</section>
+
 
             <section class="product-list">
                 <h2>Dostępne Motocykle</h2>
@@ -450,11 +543,12 @@ $szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <br> </br>
                 <a href="admin.php" class="btn btn-secondary">Zarządzaj produktami</a><br> </br>
                 <a href="zamowienia.php" class="btn btn-secondary">Przeglądaj zamówienia</a><br> </br>
+                <a href="kategorie.php" class="btn btn-secondary">zarządzaj kategoriami</a><br> </br>
 
             </section>';
         } ?>
     </section>
-      <!--  <button class="btn btn-danger close-modal-btn  " id="close" onclick="closeModal()">Zamknij</button>-->
+
     </div>
         </div>
 

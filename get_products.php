@@ -1,37 +1,43 @@
 <?php
 header('Content-Type: application/json');
-include 'db.php';
-$charset = 'utf8mb4';
-
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
+require 'db.php';
 
 try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (\PDOException $e) {
-    throw new \PDOException($e->getMessage(), (int)$e->getCode());
+    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo json_encode(['error' => 'Connection failed: ' . $e->getMessage()]);
+    exit;
 }
 
-$type = isset($_GET['type']) ? $_GET['type'] : '';
 
-$query = "SELECT * FROM products";
-if ($type) {
-    $query .= " WHERE type = :type";
+$type = isset($_GET['type']) ? trim($_GET['type']) : '';
+
+try {
+    if ($type === '') {
+
+        $stmt = $pdo->prepare("
+            SELECT p.id, p.name, p.price, p.image, c.type AS category_type
+            FROM products p
+            JOIN categories c ON p.category_id = c.id
+        ");
+        $stmt->execute();
+    } else {
+     
+        $stmt = $pdo->prepare("
+            SELECT p.id, p.name, p.price, p.image, c.type AS category_type
+            FROM products p
+            JOIN categories c ON p.category_id = c.id
+            WHERE LOWER(c.type) = :type
+        ");
+        $stmt->execute(['type' => strtolower($type)]);
+    }
+
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode($products);
+
+} catch (Exception $e) {
+    echo json_encode(['error' => $e->getMessage()]);
+    exit;
 }
-
-$stmt = $pdo->prepare($query);
-
-if ($type) {
-    $stmt->bindParam(':type', $type, PDO::PARAM_STR);
-}
-
-$stmt->execute();
-$results = $stmt->fetchAll();
-
-echo json_encode($results);
 ?>
-

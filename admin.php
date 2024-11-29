@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'db.php'; // Tutaj umieść dane do PDO.
+require 'db.php'; 
 
 $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
@@ -22,7 +22,13 @@ if (!$isAdmin) {
     exit;
 }
 
-$stmt = $pdo->query("SELECT * FROM products");
+
+
+
+
+$stmt = $pdo->query( "SELECT p.*, c.type 
+FROM products p
+JOIN categories c ON p.category_id = c.id");
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -33,7 +39,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administracyjny</title>
+    <title>Zarządzanie produktami</title>
   
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style_login_rej.css">
@@ -55,7 +61,8 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <a href="logout.php" class="btn btn-danger ">Wyloguj się</a>
     <a href="index.php" class="btn btn-danger ">główna strona</a>
     <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>
-                
+    <a href="kategorie.php" class="btn btn-danger ">Zarządzaj kategoriami</a>
+    <br></br>
     <h3 class="dane">Lista produktów</h3><br>
    <table class="table">
     <thead>

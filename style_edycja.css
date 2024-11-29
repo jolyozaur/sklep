@@ -183,6 +183,17 @@ label {
   color: #ff3b3f;
 }
 
+select{
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background-color: #333;
+  color: #eaeaea;
+}
+
+
 input[type="text"], input[type="number"] {
   width: 100%;
   padding: 12px;

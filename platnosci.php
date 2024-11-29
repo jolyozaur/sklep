@@ -1,29 +1,45 @@
 <?php
 session_start();
-require 'db.php';
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php'); 
-    exit();
+
+
+
+    if (isset($_POST['czysc']) && $_POST['czysc'] == 'true') {
+
+        $_SESSION['cart'] = [];
+     
+        header('Location: index.php');
+      
+        exit;
+    }
+
+
+if (isset($_SESSION['user_id'])) {
+    $userId = $_SESSION['user_id'];
+
+    $stmt = $pdo->prepare("SELECT * FROM addresses WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $address = $stmt->fetch(PDO::FETCH_ASSOC);
+
+   
+    $stmt = $pdo->prepare("SELECT c.*, p.name, p.price FROM carts c JOIN products p ON c.product_id = p.id WHERE c.user_id = ?");
+    $stmt->execute([$userId]);
+    $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+
+    $cartItems = $_SESSION['cart'] ?? [];
 }
 
-$userId = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT * FROM addresses WHERE user_id = ?");
-$stmt->execute([$userId]);
-$address = $stmt->fetch(PDO::FETCH_ASSOC);
 $imie = $address['Imie'] ?? '';
 $nazwisko = $address['Nazwisko'] ?? '';
 $ulica = $address['ulica'] ?? '';
 $miasto = $address['miasto'] ?? '';
 $kod = $address['kod'] ?? '';
 $tel = $address['tel'] ?? '';
-$totalAmount = 0;
-$cartItems = [];
 
-if (!empty($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $item) {
-        $totalAmount += $item['price'];
-        $cartItems[] = $item;
-    }
+$totalAmount = 0;
+
+foreach ($cartItems as $item) {
+    $totalAmount += $item['price'] * $item['quantity'];
 }
 ?>
 
@@ -43,59 +59,61 @@ if (!empty($_SESSION['cart'])) {
         <h2>Formularz Płatności</h2>
 
         <form method="POST" id="paymentForm">
-            <div class="mb-3">
-                <label for="imie" class="form-label">Imię</label>
-                <input type="text" class="form-control" id="imie" name="imie" value="<?= htmlspecialchars($imie) ?>" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="nazwisko" class="form-label">Nazwisko</label>
-                <input type="text" class="form-control" id="nazwisko" name="nazwisko" value="<?= htmlspecialchars($nazwisko) ?>" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="ulica" class="form-label">Ulica</label>
-                <input type="text" class="form-control" id="ulica" name="ulica" value="<?= htmlspecialchars($ulica) ?>" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="miasto" class="form-label">Miasto</label>
-                <input type="text" class="form-control" id="miasto" name="miasto" value="<?= htmlspecialchars($miasto) ?>" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="kod" class="form-label">Kod pocztowy</label>
-                <input type="text" class="form-control" id="kod" name="kod" value="<?= htmlspecialchars($kod) ?>" required pattern="\d{2}-\d{3}">
-            </div>
-
-            <div class="mb-3">
-                <label for="tel" class="form-label">Telefon</label>
-                <input type="tel" class="form-control" id="tel" name="tel" value="<?= htmlspecialchars($tel) ?>" required pattern="^(\+?\d{1,3})? ?\d{3} ?\d{3} ?\d{3}$">
-            </div>
-
-            <button type="button" class="btn zaplace" id="paymentButton">Zapłać</button><br><br>
-            <input type="button" class="btn wstecz" value="Wstecz" onClick="history.back();" />
-        </form>
+    <div class="mb-3">
+        <label for="imie" class="form-label">Imię</label>
+        <input type="text" class="form-control" id="imie" name="imie" value="<?= htmlspecialchars($imie) ?>" required>
     </div>
 
-    <div class="col-md-4">
-    <div class="cart-box">
-        <h4 class="text-center">Koszyk</h4>
-        <ul class="list-group">
-            <?php foreach ($cartItems as $item): ?>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span><?= htmlspecialchars($item['name']) ?></span>
-                    <span><?= number_format($item['price'], 2) ?> PLN</span>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-        <div class="total mt-3">
-            <strong>Całkowita kwota: <?= number_format($totalAmount, 2) ?> PLN</strong>
-        </div>
+    <div class="mb-3">
+        <label for="nazwisko" class="form-label">Nazwisko</label>
+        <input type="text" class="form-control" id="nazwisko" name="nazwisko" value="<?= htmlspecialchars($nazwisko) ?>" required>
     </div>
+
+    <div class="mb-3">
+        <label for="ulica" class="form-label">Ulica</label>
+        <input type="text" class="form-control" id="ulica" name="ulica" value="<?= htmlspecialchars($ulica) ?>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="miasto" class="form-label">Miasto</label>
+        <input type="text" class="form-control" id="miasto" name="miasto" value="<?= htmlspecialchars($miasto) ?>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="kod" class="form-label">Kod pocztowy</label>
+        <input type="text" class="form-control" id="kod" name="kod" value="<?= htmlspecialchars($kod) ?>" required pattern="\d{2}-\d{3}">
+    </div>
+
+    <div class="mb-3">
+        <label for="tel" class="form-label">Telefon</label>
+        <input type="tel" class="form-control" id="tel" name="tel" value="<?= htmlspecialchars($tel) ?>" required pattern="^(\+?\d{1,3})? ?\d{3} ?\d{3} ?\d{3}$">
+    </div>
+
+    <input type="hidden" name="czysc" value="true">
+
+    <button type="submit" class="btn zaplace">Zapłać</button><br><br>
+    <input type="button" class="btn wstecz" value="Wstecz" onClick="history.back();" />
+</form>
+
 </div>
 
+    <div class="col-md-4">
+        <div class="cart-box">
+            <h4 class="text-center">Koszyk</h4>
+            <ul class="list-group">
+                <?php foreach ($cartItems as $item): ?>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><?= htmlspecialchars($item['name']) ?></span>
+                        <span><?= number_format($item['price'], 2) ?> PLN x <?= htmlspecialchars($item['quantity']) ?></span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <div class="total mt-3">
+                <strong>Całkowita kwota: <?= number_format($totalAmount, 2) ?> PLN</strong>
+            </div>
+        </div>
     </div>
+
 </div>
 
 <div id="paymentModal" class="modal">

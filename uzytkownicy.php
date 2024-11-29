@@ -38,7 +38,7 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administracyjny</title>
+    <title>Zarządzanie użytkownikami</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style_login_rej.css">
 </head>    
@@ -59,7 +59,7 @@ $result = $conn->query($sql);
     <a href="logout.php" class="btn btn-danger ">Wyloguj się</a>
     <a href="index.php" class="btn btn-danger ">główna strona</a>
     <a href="admin.php" class="btn btn-danger ">Zarządzaj produktami</a>
-                
+                <br></br>
     <h3 class="dane">Lista produktów</h3><br>
     <table class="table">
         <thead>

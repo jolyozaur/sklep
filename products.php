@@ -9,9 +9,30 @@ try {
     echo json_encode(['error' => 'Connection failed: ' . $e->getMessage()]);
     exit;
 }
-$query = isset($_GET['query']) ? strtolower(trim($_GET['query'])) : '';
-$stmt = $pdo->prepare("SELECT * FROM products WHERE LOWER(name) LIKE :query");
-$stmt->execute(['query' => '%' . $query . '%']);
+
+
+$type = isset($_GET['type']) ? trim($_GET['type']) : '';
+
+if ($type === '') {
+
+    $stmt = $pdo->prepare("
+        SELECT p.*, c.type 
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+    ");
+    $stmt->execute();
+} else {
+  
+    $stmt = $pdo->prepare("
+        SELECT p.*, c.type 
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        WHERE LOWER(c.type) = :type
+    ");
+    $stmt->execute(['type' => strtolower($type)]);
+}
+
+
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 echo json_encode($products);
 ?>
