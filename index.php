@@ -432,92 +432,126 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
         </div>
       <?php endif; ?>
 
-
 <?php
-/*
-$user_id = $_SESSION['user_id'];
-  $sql = "SELECT * FROM orders WHERE user_id = ?";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$user_id]);
-$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $stmt = $pdo->prepare("
+    SELECT * FROM orders 
+    WHERE user_id = ? AND status != 'Zakończone' 
+    ORDER BY order_date DESC
+");
+$stmt->execute([$userId]);
+$currentOrders = $stmt->fetchAll();
 
-  $sql = "SELECT * FROM orders WHERE user_id = ? and status = 'W realizacji'";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$user_id]);
-$currentOrders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$nr_zamowienia = $currentOrders[0]['id'];
-$sql2 = "SELECT * FROM order_item WHERE order_id = ? ";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$nr_zamowienia]);
-$szczegoly = $stmt->fetchAll(PDO::FETCH_ASSOC);
-!>>*/?>
+$stmt = $pdo->prepare("
+    SELECT * FROM orders 
+    WHERE user_id = ? AND status = 'Zakończone' 
+    ORDER BY order_date DESC
+");
+$stmt->execute([$userId]);
+$completedOrders = $stmt->fetchAll();
+?>
  
 
 
-<?php if (!empty($currentOrders)): ?>
-        <div class="karta_dane">
-          <h2>Aktualne zamówienia</h2>
-          <?php foreach ($currentOrders as $order): ?>
+ <?php if (!empty($currentOrders)): ?>
+    <div class="karta_dane">
+        <h2>Aktualne zamówienia</h2>
+        <?php foreach ($currentOrders as $order): ?>
             <div class="info_block">
-              <span class="info_label"><strong>ID Zamówienia:</strong></span>
-              <span class="info_value"><?= htmlspecialchars($order['id']) ?></span>
+                <span class="info_label"><strong>ID Zamówienia:</strong></span>
+                <span class="info_value"><?= htmlspecialchars($order['id']) ?></span>
             </div>
             <div class="info_block">
-              <span class="info_label"><strong>Data:</strong></span>
-              <span class="info_value"><?= htmlspecialchars($order['order_date']) ?></span>
+                <span class="info_label"><strong>Data:</strong></span>
+                <span class="info_value"><?= htmlspecialchars($order['order_date']) ?></span>
             </div>
             <div class="info_block">
-              <span class="info_label"><strong>Status:</strong></span>
-              <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
+                <span class="info_label"><strong>Status:</strong></span>
+                <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
             </div>
-            <div class="info_block">
-              <span class="info_label"><strong>produkt</strong></span>
-              <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
-            </div>
+            
+            <h4>Produkty:</h4>
+            <ul>
+                <?php
+         
+                $stmt = $pdo->prepare("
+                    SELECT oi.*, p.name, p.price 
+                    FROM order_items oi 
+                    JOIN products p ON oi.product_id = p.id 
+                    WHERE oi.order_id = ?
+                ");
+                $stmt->execute([$order['id']]);
+                $orderedItems = $stmt->fetchAll();
+
+                if (!empty($orderedItems)) {
+                    foreach ($orderedItems as $item) {
+                        echo "<li>" . htmlspecialchars($item['name']) . " - " . htmlspecialchars($item['quantity']) . " x " . number_format($item['price'], 2) . " PLN</li>";
+                    }
+                } else {
+                    echo "<li>Brak produktów w zamówieniu.</li>";
+                }
+                ?>
+            </ul>
+            
             <hr style="border-color: rgba(255, 255, 255, 0.2);">
-          <?php endforeach; ?>
-        </div>
-      <?php else: ?>
-        <div class="karta_dane">
-          <h2>Aktualne zamówienia</h2>
-          <p style="text-align: center; color: #f05454;">Brak aktualnych zamówień.</p>
-        </div>
-      <?php endif; ?>
-
-      
-      <?php if (!empty($completedOrders)): ?>
-        <div class="karta_dane">
-          <h2>Zakończone zamówienia</h2>
-          <?php foreach ($completedOrders as $order): ?>
-            <div class="info_block">
-              <span class="info_label"><strong>ID Zamówienia:</strong></span>
-              <span class="info_value"><?= htmlspecialchars($order['id']) ?></span>
-            </div>
-            <div class="info_block">
-              <span class="info_label"><strong>Data:</strong></span>
-              <span class="info_value"><?= htmlspecialchars($order['data']) ?></span>
-            </div>
-            <div class="info_block">
-              <span class="info_label"><strong>Status:</strong></span>
-              <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
-            </div>
-            <hr style="border-color: rgba(255, 255, 255, 0.2);">
-          <?php endforeach; ?>
-        </div>
-      <?php else: ?>
-        <div class="karta_dane">
-          <h2>Zakończone zamówienia</h2>
-          <p style="text-align: center; color: #f05454;">Brak zakończonych zamówień.</p>
-        </div>
-
-        
-      <?php endif; ?>
-
-
-
+        <?php endforeach; ?>
     </div>
-    
+<?php else: ?>
+    <div class="karta_dane">
+        <h2>Aktualne zamówienia</h2>
+        <p style="text-align: center; color: #f05454;">Brak aktualnych zamówień.</p>
+    </div>
+<?php endif; ?>
+
+
+<?php if (!empty($completedOrders)): ?>
+    <div class="karta_dane">
+        <h2>Zakończone zamówienia</h2>
+        <?php foreach ($completedOrders as $order): ?>
+            <div class="info_block">
+                <span class="info_label"><strong>ID Zamówienia:</strong></span>
+                <span class="info_value"><?= htmlspecialchars($order['id']) ?></span>
+            </div>
+            <div class="info_block">
+                <span class="info_label"><strong>Data:</strong></span>
+                <span class="info_value"><?= htmlspecialchars($order['order_date']) ?></span>
+            </div>
+            <div class="info_block">
+                <span class="info_label"><strong>Status:</strong></span>
+                <span class="info_value"><?= htmlspecialchars($order['status']) ?></span>
+            </div>
+            
+            <h4>Produkty:</h4>
+            <ul>
+                <?php
+                
+                $stmt = $pdo->prepare("
+                    SELECT oi.*, p.name, p.price 
+                    FROM order_items oi 
+                    JOIN products p ON oi.product_id = p.id 
+                    WHERE oi.order_id = ?
+                ");
+                $stmt->execute([$order['id']]);
+                $orderedItems = $stmt->fetchAll();
+
+                if (!empty($orderedItems)) {
+                    foreach ($orderedItems as $item) {
+                        echo "<li>" . htmlspecialchars($item['name']) . " - " . htmlspecialchars($item['quantity']) . " x " . number_format($item['price'], 2) . " PLN</li>";
+                    }
+                } else {
+                    echo "<li>Brak produktów w zamówieniu.</li>";
+                }
+                ?>
+            </ul>
+            
+            <hr style="border-color: rgba(255, 255, 255, 0.2);">
+        <?php endforeach; ?>
+    </div>
+<?php else: ?>
+    <div class="karta_dane">
+        <h2>Zakończone zamówienia</h2>
+        <p style="text-align: center; color: #f05454;">Brak zakończonych zamówień.</p>
+    </div>
+<?php endif; ?>
  
 
 
