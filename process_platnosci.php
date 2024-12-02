@@ -1,7 +1,6 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $paymentMethod = htmlspecialchars($_POST['payment_method']);
-    $amount = htmlspecialchars($_POST['amount']);
+ 
   
     echo '
     <!DOCTYPE html>
@@ -121,8 +120,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </svg>
                 </div>
                 <p class="payment-message">Płatność zakończona pomyślnie!</p>
-                <p>Wybrano metodę płatności: ' . $paymentMethod . '</p>
-                <p>Kwota do zapłaty: ' . $amount . ' PLN</p>
+                
+                
                 
                 <a href="index.php" class="back-button">Powrót do strony głównej</a>
             </div>
