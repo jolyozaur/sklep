@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 02, 2024 at 01:08 PM
+-- Generation Time: Dec 02, 2024 at 11:55 PM
 -- Wersja serwera: 10.4.32-MariaDB
 -- Wersja PHP: 8.0.30
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `addresses` (
   `id_adresu` int(11) NOT NULL,
-  `user_id` int(10) NOT NULL,
+  `user_id` int(10) DEFAULT NULL,
   `Imie` varchar(255) NOT NULL,
   `Nazwisko` varchar(255) NOT NULL,
   `ulica` varchar(255) NOT NULL,
@@ -45,7 +45,11 @@ CREATE TABLE `addresses` (
 INSERT INTO `addresses` (`id_adresu`, `user_id`, `Imie`, `Nazwisko`, `ulica`, `miasto`, `kod`, `tel`) VALUES
 (1, 2, 'Wiktor', 'Zwierzyński', 'WARSZAWSKA', 'SIEDLCE', '08-103', '516558162'),
 (2, 3, 'Natan', 'Ossolinski', 'ujrzanów', 'ujrzanów', '08-110', '881482276'),
-(3, 1, 'Karol', 'Okniński', 'dąbrówka ług 16', 'dąbrówka łuh', '08-103', '123456789');
+(3, 1, 'Karol', 'Okniński', 'dąbrówka ług 16', 'dąbrówka łuh', '08-103', '123456789'),
+(4, NULL, 'adam', 'asdmwao', 'waotgja', 'qwoajgaw', '08-103', '214123123'),
+(5, NULL, 'adam', 'warf', 'awgawg', 'awgagw', '08-103', '516558162'),
+(6, NULL, 'hjgjghghj', 'ghjghjghj', 'warszawska 4', 'Stare Opole', '08-103', '516558162'),
+(7, NULL, '1241453', '14412', '124124', 'Stare Opole', '08-103', '516558162');
 
 -- --------------------------------------------------------
 
@@ -61,16 +65,6 @@ CREATE TABLE `carts` (
   `product_price` decimal(10,2) NOT NULL,
   `quantity` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `carts`
---
-
-INSERT INTO `carts` (`cart_id`, `user_id`, `product_id`, `product_name`, `product_price`, `quantity`) VALUES
-(10, 1, 3, 'Honda CBR500R', 25000.00, 2),
-(11, 1, 4, 'Ducati Monster', 50000.00, 1),
-(12, 1, 7, 'Honda PCX 125', 12000.00, 1),
-(18, 2, 4, 'Ducati Monster', 50000.00, 1);
 
 -- --------------------------------------------------------
 
@@ -146,14 +140,6 @@ CREATE TABLE `order_items` (
   `quantity` int(11) DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `order_items`
---
-
-INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `product_name`, `quantity`, `price`) VALUES
-(1, 1, 4, 'Ducati Monster', 2, 50000.00),
-(2, 2, 4, 'Ducati Monster', 1, 50000.00);
 
 -- --------------------------------------------------------
 
@@ -358,13 +344,13 @@ ALTER TABLE `zdjecia_opis`
 -- AUTO_INCREMENT for table `addresses`
 --
 ALTER TABLE `addresses`
-  MODIFY `id_adresu` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_adresu` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -382,13 +368,13 @@ ALTER TABLE `opinie`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `payment_methods`
@@ -454,20 +440,14 @@ ALTER TABLE `orders`
 -- Constraints for table `order_items`
 --
 ALTER TABLE `order_items`
-  ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
-  ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
+  ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `products`
 --
 ALTER TABLE `products`
   ADD CONSTRAINT `fk_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
-
---
--- Constraints for table `zdjecia_opis`
---
-ALTER TABLE `zdjecia_opis`
-  ADD CONSTRAINT `zdjecia_opis_ibfk_1` FOREIGN KEY (`produkt_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
