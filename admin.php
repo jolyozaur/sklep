@@ -62,6 +62,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <a href="index.php" class="btn btn-danger ">główna strona</a>
     <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>
     <a href="kategorie.php" class="btn btn-danger ">Zarządzaj kategoriami</a>
+    <a href="zamowienia.php" class="btn btn-danger ">Zarządzaj zamówieniami</a>
     <br></br>
     <h3 class="dane">Lista produktów</h3><br>
    <table class="table">

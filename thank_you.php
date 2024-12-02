@@ -2,37 +2,47 @@
 session_start();
 include 'db.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
+if (isset($_SESSION['user_id'])) {
+    $userId = $_SESSION['user_id'];
+
+    $stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC LIMIT 1");
+    $stmt->execute([$userId]);
+    $order = $stmt->fetch();
+    
+    if (!$order) {
+        echo "Nie znaleziono zamówienia.";
+        exit;
+    }
+
+    $stmt = $pdo->prepare("
+        SELECT oi.*, p.name, p.price
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        WHERE oi.order_id = ?
+    ");
+    $stmt->execute([$order['id']]);
+    $orderedItems = $stmt->fetchAll();
+    
+} else {
+
+    $stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id IS NULL ORDER BY order_date DESC LIMIT 1");
+    $stmt->execute();
+    $order = $stmt->fetch();
+
+    if (!$order) {
+        echo "Nie znaleziono zamówienia.";
+        exit;
+    }
+
+    $stmt = $pdo->prepare("
+        SELECT oi.*, p.name, p.price
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        WHERE oi.order_id = ?
+    ");
+    $stmt->execute([$order['id']]);
+    $orderedItems = $stmt->fetchAll();
 }
-
-$userId = $_SESSION['user_id'];
-
-$stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC LIMIT 1");
-$stmt->execute([$userId]);
-$order = $stmt->fetch();
-
-
-if (!$order) {
-    echo "Nie znaleziono zamówienia.";
-    exit;
-}
-
-$stmt = $pdo->prepare("
-    SELECT oi.*, p.name, p.price
-    FROM order_items oi
-    JOIN products p ON oi.product_id = p.id
-    WHERE oi.order_id = ?
-");
-$stmt->execute([$order['id']]);
-$orderedItems = $stmt->fetchAll();
-
-if (empty($orderedItems)) {
-    echo "Brak produktów w zamówieniu.";
-    exit;
-}
-
 ?>
 
 <!DOCTYPE html>

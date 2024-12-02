@@ -27,9 +27,11 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <header>
         <nav>
             <ul>
-                <li><a href="index.php">Strona główna</a></li>
-                <li><a href="orders.php">Moje zamówienia</a></li>
-                <li><a href="logout.php">Wyloguj się</a></li>
+            <a href="logout.php" class="btn btn-danger ">Wyloguj się</a>
+    <a href="index.php" class="btn btn-danger ">główna strona</a>
+    <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>
+    <a href="kategorie.php" class="btn btn-danger ">Zarządzaj kategoriami</a>
+    <a href="zamowienia.php" class="btn btn-danger ">Zarządzaj zamówieniami</a>
             </ul>
         </nav>
     </header>

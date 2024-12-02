@@ -80,6 +80,7 @@ if (isset($_GET['edit'])) {
     <a href="index.php" class="btn btn-danger ">główna strona</a>
     <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>
     <a href="kategorie.php" class="btn btn-danger ">Zarządzaj kategoriami</a>
+    <a href="zamowienia.php" class="btn btn-danger ">Zarządzaj zamówieniami</a>
     <br></br>
 
 

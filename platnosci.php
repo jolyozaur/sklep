@@ -21,15 +21,21 @@ function calculateTotalAmount($cartItems) {
     return $totalAmount;
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_form'])) {
     $shippingMethodId = intval($_POST['shipping_method']);
     $paymentMethodId = intval($_POST['payment_method']);
-    $addressId = intval($_POST['address_id']); 
+    $addressId = isset($_POST['address_id']) ? intval($_POST['address_id']) : null;
 
+    
     if (isset($_SESSION['user_id'])) {
         $userId = $_SESSION['user_id'];
-    
+    } else {
+        $userId = null;
+    }
+
+  
+    if ($userId) {
+  
         $stmt = $pdo->prepare("
             SELECT c.product_id, p.name, p.price, c.quantity
             FROM carts c
@@ -38,57 +44,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_form'])) {
         ");
         $stmt->execute([$userId]);
         $cartItems = $stmt->fetchAll();
+    } else {
+      
+        $cartItems = $_SESSION['cart'] ?? [];
+        foreach ($cartItems as &$item) {
+           
+            if (!isset($item['name']) || !isset($item['price'])) {
+        
+                $item['name'] = 'Nieznany produkt';
+                $item['price'] = 0;
+            }
+        }
+    }
 
-   
-        $totalAmount = calculateTotalAmount($cartItems);
+    $totalAmount = calculateTotalAmount($cartItems);
+
+ 
+    if (!$userId) {
+        $imie = $_POST['imie'];
+        $nazwisko = $_POST['nazwisko'];
+        $ulica = $_POST['ulica'];
+        $miasto = $_POST['miasto'];
+        $kod = $_POST['kod'];
+        $tel = $_POST['tel'];
 
         $stmt = $pdo->prepare("
-            INSERT INTO orders (user_id, total_amount, shipping_method_id, payment_method_id, address_id, status, order_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO addresses (user_id, Imie, Nazwisko, ulica, miasto, kod, tel)
+            VALUES (NULL, ?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([$imie, $nazwisko, $ulica, $miasto, $kod, $tel]);
+
+        $addressId = $pdo->lastInsertId();
+    }
+
+    $stmt = $pdo->prepare("
+        INSERT INTO orders (user_id, total_amount, shipping_method_id, payment_method_id, address_id, status, order_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->execute([
+        $userId,
+        $totalAmount,
+        $shippingMethodId,
+        $paymentMethodId,
+        $addressId,
+        'Oczekujące',
+        date('Y-m-d H:i:s')
+    ]);
+
+    $orderId = $pdo->lastInsertId();
+
+    foreach ($cartItems as $item) {
+        $stmt = $pdo->prepare("
+            INSERT INTO order_items (order_id, product_id, product_name, quantity, price)
+            VALUES (?, ?, ?, ?, ?)
         ");
         $stmt->execute([
-            $userId,
-            $totalAmount,
-            $shippingMethodId,
-            $paymentMethodId,
-            $addressId,
-            'Oczekujące',
-            date('Y-m-d H:i:s')
+            $orderId,
+            $item['product_id'] ?? null,  
+            $item['name'],
+            $item['quantity'],
+            $item['price']
         ]);
-
-        $orderId = $pdo->lastInsertId();
-
-        foreach ($cartItems as $item) {
-            $stmt = $pdo->prepare("
-                INSERT INTO order_items (order_id, product_id, product_name, quantity, price)
-                VALUES (?, ?, ?, ?, ?)
-            ");
-            $stmt->execute([
-                $orderId,
-                $item['product_id'],
-                $item['name'],
-                $item['quantity'],
-                $item['price']
-            ]);
-        }
-
-        clearCart();
     }
+
+
+    clearCart();
+
 
     header('Location: thank_you.php');
     exit;
 }
 
-
 $cartItems = [];
 $totalAmount = 0;
+
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
 
+    
     $stmt = $pdo->prepare("SELECT * FROM addresses WHERE user_id = ?");
     $stmt->execute([$userId]);
     $addresses = $stmt->fetchAll();
 
+    
     $stmt = $pdo->prepare("
         SELECT c.product_id, p.name, p.price, c.quantity 
         FROM carts c 
@@ -98,17 +136,17 @@ if (isset($_SESSION['user_id'])) {
     $stmt->execute([$userId]);
     $cartItems = $stmt->fetchAll();
 
- 
     $totalAmount = calculateTotalAmount($cartItems);
 } else {
 
     $cartItems = $_SESSION['cart'] ?? [];
+    $addresses = [];  
     foreach ($cartItems as &$item) {
-        $stmt = $pdo->prepare("SELECT name, price FROM products WHERE id = ?");
-        $stmt->execute([$item['product_id']]);
-        $product = $stmt->fetch();
-        $item['name'] = $product['name'] ?? 'Nieznany produkt';
-        $item['price'] = $product['price'] ?? 0;
+      
+        if (!isset($item['name']) || !isset($item['price'])) {
+            $item['name'] = 'Nieznany produkt';
+            $item['price'] = 0;
+        }
     }
 
     $totalAmount = calculateTotalAmount($cartItems);
