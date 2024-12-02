@@ -2,7 +2,7 @@
 session_start();
 include 'db.php';
 
-// Funkcja czyszcząca koszyk
+
 function clearCart() {
     global $pdo;
     if (isset($_SESSION['user_id'])) {
@@ -13,7 +13,6 @@ function clearCart() {
     }
 }
 
-// Funkcja obliczająca całkowitą kwotę zamówienia
 function calculateTotalAmount($cartItems) {
     $totalAmount = 0;
     foreach ($cartItems as $item) {
@@ -22,16 +21,15 @@ function calculateTotalAmount($cartItems) {
     return $totalAmount;
 }
 
-// Sprawdzamy czy jest POST z formularza płatności
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_form'])) {
     $shippingMethodId = intval($_POST['shipping_method']);
     $paymentMethodId = intval($_POST['payment_method']);
-    $addressId = intval($_POST['address_id']);  // Używamy address_id z formularza
+    $addressId = intval($_POST['address_id']); 
 
     if (isset($_SESSION['user_id'])) {
         $userId = $_SESSION['user_id'];
-        
-        // Pobranie danych o koszyku
+    
         $stmt = $pdo->prepare("
             SELECT c.product_id, p.name, p.price, c.quantity
             FROM carts c
@@ -41,10 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_form'])) {
         $stmt->execute([$userId]);
         $cartItems = $stmt->fetchAll();
 
-        // Obliczenie całkowitej kwoty zamówienia
+   
         $totalAmount = calculateTotalAmount($cartItems);
 
-        // Tworzenie zamówienia w tabeli orders
         $stmt = $pdo->prepare("
             INSERT INTO orders (user_id, total_amount, shipping_method_id, payment_method_id, address_id, status, order_date)
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -59,10 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_form'])) {
             date('Y-m-d H:i:s')
         ]);
 
-        // Pobranie ID ostatniego zamówienia
         $orderId = $pdo->lastInsertId();
 
-        // Dodanie produktów do tabeli order_items
         foreach ($cartItems as $item) {
             $stmt = $pdo->prepare("
                 INSERT INTO order_items (order_id, product_id, product_name, quantity, price)
@@ -77,7 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_form'])) {
             ]);
         }
 
-        // Usuwanie produktów z koszyka po złożeniu zamówienia
         clearCart();
     }
 
@@ -85,18 +79,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_form'])) {
     exit;
 }
 
-// Jeśli użytkownik jest zalogowany, pobieramy dane
+
 $cartItems = [];
 $totalAmount = 0;
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
 
-    // Pobranie zapisanych adresów
     $stmt = $pdo->prepare("SELECT * FROM addresses WHERE user_id = ?");
     $stmt->execute([$userId]);
     $addresses = $stmt->fetchAll();
 
-    // Pobranie produktów w koszyku
     $stmt = $pdo->prepare("
         SELECT c.product_id, p.name, p.price, c.quantity 
         FROM carts c 
@@ -106,10 +98,10 @@ if (isset($_SESSION['user_id'])) {
     $stmt->execute([$userId]);
     $cartItems = $stmt->fetchAll();
 
-    // Obliczenie całkowitej kwoty zamówienia
+ 
     $totalAmount = calculateTotalAmount($cartItems);
 } else {
-    // Koszyk dla niezalogowanych użytkowników
+
     $cartItems = $_SESSION['cart'] ?? [];
     foreach ($cartItems as &$item) {
         $stmt = $pdo->prepare("SELECT name, price FROM products WHERE id = ?");
@@ -118,18 +110,16 @@ if (isset($_SESSION['user_id'])) {
         $item['name'] = $product['name'] ?? 'Nieznany produkt';
         $item['price'] = $product['price'] ?? 0;
     }
-    // Obliczenie całkowitej kwoty zamówienia
+
     $totalAmount = calculateTotalAmount($cartItems);
 }
 
-// Pobranie metod płatności i dostawy
 $stmt = $pdo->query("SELECT id, name FROM shipping_methods");
 $shippingMethods = $stmt->fetchAll();
 
 $stmt = $pdo->query("SELECT id, name FROM payment_methods");
 $paymentMethods = $stmt->fetchAll();
 ?>
-<!-- Struktura HTML formularza płatności -->
 
 <!DOCTYPE html>
 <html lang="pl">

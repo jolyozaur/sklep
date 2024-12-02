@@ -2,7 +2,6 @@
 session_start();
 include 'db.php';
 
-// Sprawdzenie, czy użytkownik jest zalogowany
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
@@ -10,18 +9,16 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-// Pobranie ostatniego zamówienia użytkownika
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC LIMIT 1");
 $stmt->execute([$userId]);
 $order = $stmt->fetch();
 
-// Debug: Sprawdzamy, czy zamówienie zostało znalezione
+
 if (!$order) {
     echo "Nie znaleziono zamówienia.";
     exit;
 }
 
-// Pobranie produktów zamówionych przez użytkownika
 $stmt = $pdo->prepare("
     SELECT oi.*, p.name, p.price
     FROM order_items oi
@@ -31,7 +28,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([$order['id']]);
 $orderedItems = $stmt->fetchAll();
 
-// Debug: Sprawdzamy, czy produkty zostały poprawnie pobrane
 if (empty($orderedItems)) {
     echo "Brak produktów w zamówieniu.";
     exit;
@@ -45,7 +41,7 @@ if (empty($orderedItems)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Potwierdzenie zamówienia</title>
-    <link rel="stylesheet" href="platnosci.css"> <!-- Korzystamy ze wspólnego pliku CSS -->
+    <link rel="stylesheet" href="platnosci.css"> 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
