@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 29 Lis 2024, 14:52
--- Wersja serwera: 10.4.17-MariaDB
--- Wersja PHP: 8.0.2
+-- Generation Time: Dec 02, 2024 at 01:08 PM
+-- Wersja serwera: 10.4.32-MariaDB
+-- Wersja PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Baza danych: `m10280_motocykle_skep`
+-- Database: `m10280_motocykle_skep`
 --
 
 -- --------------------------------------------------------
@@ -36,10 +36,10 @@ CREATE TABLE `addresses` (
   `miasto` varchar(255) NOT NULL,
   `kod` varchar(6) NOT NULL,
   `tel` varchar(9) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Zrzut danych tabeli `addresses`
+-- Dumping data for table `addresses`
 --
 
 INSERT INTO `addresses` (`id_adresu`, `user_id`, `Imie`, `Nazwisko`, `ulica`, `miasto`, `kod`, `tel`) VALUES
@@ -60,17 +60,17 @@ CREATE TABLE `carts` (
   `product_name` varchar(255) NOT NULL,
   `product_price` decimal(10,2) NOT NULL,
   `quantity` int(11) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Zrzut danych tabeli `carts`
+-- Dumping data for table `carts`
 --
 
 INSERT INTO `carts` (`cart_id`, `user_id`, `product_id`, `product_name`, `product_price`, `quantity`) VALUES
-(8, 2, 1, 'Harley Davidson', '45000.00', 3),
-(10, 1, 3, 'Honda CBR500R', '25000.00', 2),
-(11, 1, 4, 'Ducati Monster', '50000.00', 1),
-(12, 1, 7, 'Honda PCX 125', '12000.00', 1);
+(10, 1, 3, 'Honda CBR500R', 25000.00, 2),
+(11, 1, 4, 'Ducati Monster', 50000.00, 1),
+(12, 1, 7, 'Honda PCX 125', 12000.00, 1),
+(18, 2, 4, 'Ducati Monster', 50000.00, 1);
 
 -- --------------------------------------------------------
 
@@ -81,10 +81,10 @@ INSERT INTO `carts` (`cart_id`, `user_id`, `product_id`, `product_name`, `produc
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `type` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Zrzut danych tabeli `categories`
+-- Dumping data for table `categories`
 --
 
 INSERT INTO `categories` (`id`, `type`) VALUES
@@ -106,10 +106,10 @@ CREATE TABLE `opinie` (
   `autor` varchar(100) NOT NULL,
   `tresc` text NOT NULL,
   `data_utworzenia` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Zrzut danych tabeli `opinie`
+-- Dumping data for table `opinie`
 --
 
 INSERT INTO `opinie` (`id`, `produkt_id`, `autor`, `tresc`, `data_utworzenia`) VALUES
@@ -123,19 +123,14 @@ INSERT INTO `opinie` (`id`, `produkt_id`, `autor`, `tresc`, `data_utworzenia`) V
 
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `order_date` datetime DEFAULT current_timestamp(),
-  `status` enum('W realizacji','Zakończone','Anulowane') DEFAULT 'W realizacji',
-  `total` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Zrzut danych tabeli `orders`
---
-
-INSERT INTO `orders` (`id`, `user_id`, `order_date`, `status`, `total`) VALUES
-(1, 2, '2024-11-27 17:33:13', 'W realizacji', '120000.00'),
-(2, 2, '2024-11-27 17:33:16', 'W realizacji', '120000.00');
+  `user_id` int(11) DEFAULT NULL,
+  `total_amount` decimal(10,2) DEFAULT NULL,
+  `shipping_method_id` int(11) DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'Oczekujące',
+  `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `payment_method_id` int(11) NOT NULL,
+  `address_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -145,18 +140,40 @@ INSERT INTO `orders` (`id`, `user_id`, `order_date`, `status`, `total`) VALUES
 
 CREATE TABLE `order_items` (
   `id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `order_id` int(11) DEFAULT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `product_name` varchar(255) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Zrzut danych tabeli `order_items`
+-- Dumping data for table `order_items`
 --
 
-INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`) VALUES
-(1, 1, 4, 0),
-(2, 1, 4, 1);
+INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `product_name`, `quantity`, `price`) VALUES
+(1, 1, 4, 'Ducati Monster', 2, 50000.00),
+(2, 2, 4, 'Ducati Monster', 1, 50000.00);
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `payment_methods`
+--
+
+CREATE TABLE `payment_methods` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payment_methods`
+--
+
+INSERT INTO `payment_methods` (`id`, `name`) VALUES
+(1, 'BLIK'),
+(2, 'Płatność kartą'),
+(3, 'Płatność przy odbiorze');
 
 -- --------------------------------------------------------
 
@@ -171,21 +188,43 @@ CREATE TABLE `products` (
   `Opis` varchar(255) NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `category_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Zrzut danych tabeli `products`
+-- Dumping data for table `products`
 --
 
 INSERT INTO `products` (`id`, `name`, `image`, `Opis`, `price`, `category_id`) VALUES
-(1, 'Harley Davidson', 'images\\davidson.png', 'Harley-Davidson Sport Glide to idealne połączenie zwinnego cruisera i wygodnego turystyka, któremu niestraszne są dalekie wyprawy.', '45000.00', 1),
-(2, 'Yamaha MT-07', 'images/mt07.png', 'MT-07 zajmuje pierwsze miejsce w swojej klasie od momentu pojawienia się na rynku.', '30000.00', 2),
-(3, 'Honda CBR500R', 'images/hondacbr500.png', '', '25000.00', 3),
-(4, 'Ducati Monster', 'images/ducati.png', '', '50000.00', 3),
-(5, 'Piaggio Liberty 50', 'images/liberty50.png', '', '7000.00', 4),
-(6, 'BMW R 1250 GS', 'images/bmw1250gs.png', '', '60000.00', 5),
-(7, 'Honda PCX 125', 'images/hondapcx125.png', '', '12000.00', 4),
-(8, 'Kawasaki Ninja 650', 'images/ninja650.png', '', '40000.00', 3);
+(1, 'Harley Davidson', 'images\\davidson.png', 'Harley-Davidson Sport Glide to idealne połączenie zwinnego cruisera i wygodnego turystyka, któremu niestraszne są dalekie wyprawy.', 45000.00, 1),
+(2, 'Yamaha MT-07', 'images/mt07.png', 'MT-07 zajmuje pierwsze miejsce w swojej klasie od momentu pojawienia się na rynku.', 30000.00, 2),
+(3, 'Honda CBR500R', 'images/hondacbr500.png', '', 25000.00, 3),
+(4, 'Ducati Monster', 'images/ducati.png', '', 50000.00, 3),
+(5, 'Piaggio Liberty 50', 'images/liberty50.png', '', 7000.00, 4),
+(6, 'BMW R 1250 GS', 'images/bmw1250gs.png', '', 60000.00, 5),
+(7, 'Honda PCX 125', 'images/hondapcx125.png', '', 12000.00, 4),
+(8, 'Kawasaki Ninja 650', 'images/ninja650.png', '', 40000.00, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `shipping_methods`
+--
+
+CREATE TABLE `shipping_methods` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `cost` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `shipping_methods`
+--
+
+INSERT INTO `shipping_methods` (`id`, `name`, `cost`) VALUES
+(1, 'DPD', 15.00),
+(2, 'FedEx', 20.00),
+(3, 'Odbiór osobisty', 0.00),
+(4, 'Paczkomat', 12.00);
 
 -- --------------------------------------------------------
 
@@ -201,10 +240,10 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `password` varchar(255) DEFAULT NULL,
   `czy_admin` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Zrzut danych tabeli `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `created_at`, `password`, `czy_admin`) VALUES
@@ -222,10 +261,10 @@ CREATE TABLE `zdjecia_opis` (
   `id` int(11) NOT NULL,
   `produkt_id` int(11) NOT NULL,
   `sciezka` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Zrzut danych tabeli `zdjecia_opis`
+-- Dumping data for table `zdjecia_opis`
 --
 
 INSERT INTO `zdjecia_opis` (`id`, `produkt_id`, `sciezka`) VALUES
@@ -268,7 +307,8 @@ ALTER TABLE `opinie`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `shipping_method_id` (`shipping_method_id`);
 
 --
 -- Indeksy dla tabeli `order_items`
@@ -279,11 +319,23 @@ ALTER TABLE `order_items`
   ADD KEY `product_id` (`product_id`);
 
 --
+-- Indeksy dla tabeli `payment_methods`
+--
+ALTER TABLE `payment_methods`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeksy dla tabeli `products`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_category` (`category_id`);
+
+--
+-- Indeksy dla tabeli `shipping_methods`
+--
+ALTER TABLE `shipping_methods`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeksy dla tabeli `users`
@@ -299,107 +351,120 @@ ALTER TABLE `zdjecia_opis`
   ADD KEY `produkt_id` (`produkt_id`);
 
 --
--- AUTO_INCREMENT dla zrzuconych tabel
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT dla tabeli `addresses`
+-- AUTO_INCREMENT for table `addresses`
 --
 ALTER TABLE `addresses`
   MODIFY `id_adresu` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT dla tabeli `carts`
+-- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT dla tabeli `categories`
+-- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
--- AUTO_INCREMENT dla tabeli `opinie`
+-- AUTO_INCREMENT for table `opinie`
 --
 ALTER TABLE `opinie`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT dla tabeli `orders`
+-- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT dla tabeli `order_items`
+-- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT dla tabeli `products`
+-- AUTO_INCREMENT for table `payment_methods`
+--
+ALTER TABLE `payment_methods`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT dla tabeli `users`
+-- AUTO_INCREMENT for table `shipping_methods`
+--
+ALTER TABLE `shipping_methods`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT dla tabeli `zdjecia_opis`
+-- AUTO_INCREMENT for table `zdjecia_opis`
 --
 ALTER TABLE `zdjecia_opis`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- Ograniczenia dla zrzutów tabel
+-- Constraints for dumped tables
 --
 
 --
--- Ograniczenia dla tabeli `addresses`
+-- Constraints for table `addresses`
 --
 ALTER TABLE `addresses`
   ADD CONSTRAINT `addresses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Ograniczenia dla tabeli `carts`
+-- Constraints for table `carts`
 --
 ALTER TABLE `carts`
   ADD CONSTRAINT `carts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `carts_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 
 --
--- Ograniczenia dla tabeli `opinie`
+-- Constraints for table `opinie`
 --
 ALTER TABLE `opinie`
   ADD CONSTRAINT `opinie_ibfk_1` FOREIGN KEY (`produkt_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
 
 --
--- Ograniczenia dla tabeli `orders`
+-- Constraints for table `orders`
 --
 ALTER TABLE `orders`
-  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`shipping_method_id`) REFERENCES `shipping_methods` (`id`);
 
 --
--- Ograniczenia dla tabeli `order_items`
+-- Constraints for table `order_items`
 --
 ALTER TABLE `order_items`
   ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
   ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 
 --
--- Ograniczenia dla tabeli `products`
+-- Constraints for table `products`
 --
 ALTER TABLE `products`
   ADD CONSTRAINT `fk_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
 
 --
--- Ograniczenia dla tabeli `zdjecia_opis`
+-- Constraints for table `zdjecia_opis`
 --
 ALTER TABLE `zdjecia_opis`
   ADD CONSTRAINT `zdjecia_opis_ibfk_1` FOREIGN KEY (`produkt_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
