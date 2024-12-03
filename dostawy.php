@@ -21,8 +21,18 @@ if (!$isAdmin) {
     exit();
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST['name'];
+    $cost = $_POST['cost'];
 
-$sql = "SELECT * FROM podstrony";
+    $stmt = $pdo->prepare("INSERT INTO Shipping_methods (name, cost) VALUES (?, ?)");
+    $stmt->execute([$name, $cost]);
+
+    header("Location: dostawy.php");
+    exit();
+}
+
+$sql = "SELECT * FROM Shipping_methods";
 $result = $pdo->query($sql);
 ?>
 
@@ -31,25 +41,26 @@ $result = $pdo->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zarządzanie Podstronami</title>
-    <link rel="stylesheet" href="style.css"> 
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> 
-<style>
-    .table{
-
-color:white;
+    <title>Zarządzanie Sposobami Dostawy</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+   <style>
+.table{
+    color:white;
 }
-</style>
+
+   </style> 
 </head>
 <body>
- 
-<header class="bg-dark text-white py-3">
+    <header class="bg-dark text-white py-3">
         <div class="container">
             <h1 class="display-4">Panel Administracyjny</h1>
-            <p class="lead">Zarządzanie kategoriami sklepu motocyklowego</p>
+            <p class="lead">Zarządzanie metodami dostawy</p>
         </div>
-        <div class="container mt-5">
+    </header>
 
+    <div class="container mt-5">
+        <h2>Lista metod dostawy</h2>
         <a href="index.php" class="btn btn-danger mb-3">Strona główna</a>
         <a href="uzytkownicy.php" class="btn btn-danger mb-3">Zarządzaj <br> użytkownikami</a>
         <a href="kategorie.php" class="btn btn-danger mb-3">Zarządzaj<br> kategoriami</a>
@@ -57,17 +68,31 @@ color:white;
         <a href="podstrony.php" class="btn btn-danger mb-3">Zarządzaj<br> podstronami</a>
         <a href="admin.php" class="btn btn-danger mb-3">Zarządzaj<br> produktami</a>
         <a href="dostawy.php" class="btn btn-danger mb-3">Zarządzaj<br> dostawami</a>
-    </header>
+    </div>
 
     <div class="container mt-5">
-        <h2>Lista Podstron</h2>
-        <a href="add_page.php" class="btn btn-success mb-3">Dodaj nową podstronę</a>
-        <table class="table ">
-            <thead class="">
+        <button class="btn btn-success mb-3" data-toggle="collapse" data-target="#addMethodForm">Dodaj nową metodę dostawy</button>
+
+        <div id="addMethodForm" class="collapse mt-3">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="name">Nazwa sposobu dostawy</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="cost">Koszt dostawy</label>
+                    <input type="number" class="form-control" id="cost" name="cost" step="0.01" required>
+                </div>
+                <button type="submit" class="btn btn-success">Dodaj</button>
+            </form>
+        </div>
+
+        <table class="table mt-5">
+            <thead class="thead-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Tytuł</th>
-                    <th>Data utworzenia</th>
+                    <th>Nazwa</th>
+                    <th>Koszt</th>
                     <th>Opcje</th>
                 </tr>
             </thead>
@@ -77,17 +102,16 @@ color:white;
                     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                         echo "<tr>";
                         echo "<td>" . $row['id'] . "</td>";
-                        echo "<td>" . $row['tytul'] . "</td>";
-                        echo "<td>" . $row['data_utworzenia'] . "</td>";
+                        echo "<td>" . $row['name'] . "</td>";
+                        echo "<td>" . $row['cost'] . " zł</td>";
                         echo "<td>
-                          <a href='view_page.php?id=" . $row['id'] . "' class='btn btn-info'>Zobacz</a> |
-                          <a href='edit_page.php?id=" . $row['id'] . "' class='btn btn-warning'>Edytuj</a> |
-                          <a href='delete_page.php?id=" . $row['id'] . "' class='btn btn-danger'>Usuń</a>
+                            <a href='edit_shipping_method.php?id=" . $row['id'] . "' class='btn btn-warning'>Edytuj</a> |
+                            <a href='delete_shipping_method.php?id=" . $row['id'] . "' class='btn btn-danger'>Usuń</a>
                         </td>";
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='4' class='text-center'>Brak podstron</td></tr>";
+                    echo "<tr><td colspan='4' class='text-center'>Brak metod dostawy</td></tr>";
                 }
                 ?>
             </tbody>

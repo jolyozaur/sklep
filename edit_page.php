@@ -46,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edytuj Podstronę</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -60,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="tresc">Treść Podstrony</label>
                 <textarea class="form-control" id="tresc" name="tresc" rows="5" required><?php echo htmlspecialchars($page['tresc']); ?></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+            <button type="submit" class="btn btn-success">Zapisz zmiany</button>
         </form>
     </div>
     <footer>
