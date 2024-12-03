@@ -5,23 +5,23 @@ require 'db.php';
 $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
 $userData = null;
-$userRole = '';  // Nowa zmienna przechowująca rolę użytkownika
+$userRole = '';  
 
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
-    // Pobieramy dane użytkownika (rola, email, username)
+
     $stmt = $pdo->prepare(
-        'SELECT username, email,  rodzaj FROM users WHERE id = ?' // Dodajemy pole "rola"
+        'SELECT username, email,  rodzaj FROM users WHERE id = ?' 
     );
     $stmt->execute([$userId]);
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Sprawdzamy rolę użytkownika
+
     if ($userData) {
-        $userRole = $userData['rodzaj']; // rola użytkownika (np. admin, pracownik, klient)
+        $userRole = $userData['rodzaj']; 
     }
 
-    // Pobieramy dane adresowe użytkownika
+    
     $stmt = $pdo->prepare("SELECT * FROM addresses WHERE user_id = ?");
     $stmt->execute([$userId]);
     $useradres = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -38,7 +38,7 @@ if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-// Jeśli użytkownik jest zalogowany, synchronizujemy dane koszyka
+
 if ($loggedIn) {
     $stmt = $pdo->prepare('SELECT * FROM carts WHERE user_id = ?');
     $stmt->execute([$_SESSION['user_id']]);
@@ -65,18 +65,18 @@ if (isset($_POST['add_to_cart'])) {
     $product_price = $_POST['product_price'];
 
     if ($loggedIn) {
-        // Sprawdzamy, czy produkt już znajduje się w koszyku użytkownika
+      
         $stmt = $pdo->prepare('SELECT * FROM carts WHERE user_id = ? AND product_id = ?');
         $stmt->execute([$_SESSION['user_id'], $product_id]);
         $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($cart_item) {
-            // Zaktualizuj ilość produktu w koszyku
+          
             $new_quantity = $cart_item['quantity'] + 1;
             $updateStmt = $pdo->prepare('UPDATE carts SET quantity = ? WHERE user_id = ? AND product_id = ?');
             $updateStmt->execute([$new_quantity, $_SESSION['user_id'], $product_id]);
         } else {
-            // Dodaj nowy produkt do koszyka
+           
             $stmt = $pdo->prepare('INSERT INTO carts (user_id, product_id, product_name, product_price, quantity) 
                                    VALUES (?, ?, ?, ?, ?)');
             $stmt->execute([$_SESSION['user_id'], $product_id, $product_name, $product_price, 1]);
@@ -84,7 +84,7 @@ if (isset($_POST['add_to_cart'])) {
 
         refresh_cart_session();
     } else {
-        // Dla niezalogowanego użytkownika dodajemy do sesji
+      
         $found = false;
         foreach ($_SESSION['cart'] as &$item) {
             if ($item['id'] == $product_id) {
@@ -143,7 +143,6 @@ function refresh_cart_session() {
     }
 }
 
-// Obsługa zmiany danych użytkownika
 $zmiana_error = '';
 $zmiana_success = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
@@ -208,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
     }
 }
 
-// Obsługa dodawania adresu
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
     $imie = htmlspecialchars(trim($_POST['new_name']));
     $nazwisko = htmlspecialchars(trim($_POST['new_surname']));
@@ -376,7 +375,7 @@ $resultMenu = $pdo->query($sqlMenu);
             <section class="product-list">
                 <h2>Dostępne Motocykle</h2>
                 <div id="products">
-                
+                jkh
                 </div>
             </section>
         </div>
@@ -769,7 +768,8 @@ function validateAddressForm() {
             if (modal.style.display === "block" && !event.target.matches('.modal-content')) {
                 closeModal();
             }
-        }
+        };
+        
     </script>
 </body>
 </html>
