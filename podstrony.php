@@ -43,13 +43,21 @@ color:white;
 </head>
 <body>
  
-    <header class="bg-dark text-white py-3">
+<header class="bg-dark text-white py-3">
         <div class="container">
             <h1 class="display-4">Panel Administracyjny</h1>
-            <p class="lead">Zarządzanie podstronami sklepu motocyklowego</p>
+            <p class="lead">Zarządzanie kategoriami sklepu motocyklowego</p>
         </div>
-    </header>
+        <div class="container mt-5">
 
+
+<a href="index.php" class="btn btn-danger">Strona główna</a>
+<a href="uzytkownicy.php" class="btn btn-danger">Zarządzaj użytkownikami</a>
+<a href="kategorie.php" class="btn btn-danger">Zarządzaj kategoriami</a>
+<a href="zamowienia.php" class="btn btn-danger">Zarządzaj zamówieniami</a>
+<a href="podstrony.php" class="btn btn-danger">Zarządzaj podstronami</a>
+<a href="admin.php" class="btn btn-danger">Zarządzaj produktami</a>
+    </header>
 
     <div class="container mt-5">
         <h2>Lista Podstron</h2>

@@ -89,19 +89,22 @@ if (isset($_GET['edit'])) {
             <h1 class="display-4">Panel Administracyjny</h1>
             <p class="lead">Zarządzanie kategoriami sklepu motocyklowego</p>
         </div>
+        <div class="container mt-5">
+
+
+
+<a href="index.php" class="btn btn-danger">Strona główna</a>
+<a href="uzytkownicy.php" class="btn btn-danger">Zarządzaj użytkownikami</a>
+<a href="kategorie.php" class="btn btn-danger">Zarządzaj kategoriami</a>
+<a href="zamowienia.php" class="btn btn-danger">Zarządzaj zamówieniami</a>
+<a href="podstrony.php" class="btn btn-danger">Zarządzaj podstronami</a>
+<a href="admin.php" class="btn btn-danger">Zarządzaj produktami</a>
     </header>
 
     <main>
         <div class="container mt-5">
 
 
-
-    <a href="logout.php" class="btn btn-danger ">Wyloguj się</a>
-    <a href="index.php" class="btn btn-danger ">główna strona</a>
-    <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>
-    <a href="kategorie.php" class="btn btn-danger ">Zarządzaj kategoriami</a>
-    <a href="zamowienia.php" class="btn btn-danger ">Zarządzaj zamówieniami</a>
-    <br></br>
 
 
 
