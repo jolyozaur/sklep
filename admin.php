@@ -152,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo "<td>
                             <a href='edit_product.php?id=" . $row['id'] . "' class='btn btn-warning'>Edytuj</a> |
                             <a href='delete_product.php?id=" . $row['id'] . "' class='btn btn-danger'>Usuń</a>
+                            <a href='product-details.php?id=" . $row['id'] . "' class='btn btn-info'>Zobacz</a> |
                           </td>";
                     echo "</tr>";
                 }
