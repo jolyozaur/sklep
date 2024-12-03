@@ -739,6 +739,7 @@ echo '
         <a href="zamowienia.php" class="btn btn-secondary">Przeglądaj zamówienia</a><br> </br>
         <a href="kategorie.php" class="btn btn-secondary">Zarządzaj kategoriami</a><br> </br>
         <a href="podstrony.php" class="btn btn-secondary">Zarządzaj podstronami</a><br> </br>
+        <a href="dostawy.php" class="btn btn-secondary">Zarządzaj dostawami</a><br> </br>
     </section>
 </section>
 </div>';
