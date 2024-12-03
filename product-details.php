@@ -344,8 +344,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $product['name']; ?></title>
-    <link rel="stylesheet" href="style_produkt.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_produkt.css">
+    
   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" >
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -354,7 +355,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
 <script src="script.js" defer></script>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
-
+<style>
+    .add_to_cart_btn {
+    padding: 0.5rem 1rem;
+    background-color: #ff3b3f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+</style>
 </head>
 <body>
 <header>
@@ -465,7 +476,7 @@ $resultMenu = $pdo->query($sqlMenu);
             <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
             <input type="hidden" name="product_name" value="<?php echo $product['name']; ?>">
             <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
-            <button type="submit" name="add_to_cart" class="add-to-cart-btn">Dodaj do koszyka</button>
+            <button type="submit" name="add_to_cart" class=" btn btn-danger">Dodaj do koszyka</button>
         </form>
     </div>
 </div>
