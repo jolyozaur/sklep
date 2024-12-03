@@ -1,8 +1,19 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin1234') {
-    header("Location: login.php"); 
+if ($loggedIn) {
+    $userId = $_SESSION['user_id'];
+    $stmt = $pdo->prepare("SELECT username, email, rodzaj FROM users WHERE id = ?");
+    $stmt->execute([$userId]); 
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($userData && ($userData['rodzaj'] === 'admin' || $userData['rodzaj'] === 'pracownik')) {
+        $isAllowed = true;
+    }
+}
+
+if (!$isAllowed) {
+    header("Location: login.php");
     exit;
 }
 

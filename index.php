@@ -1,29 +1,30 @@
 <?php
-
 session_start();
 require 'db.php';
 
 $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
 $userData = null;
-$isAdmin = false; 
-
+$userRole = '';  // Nowa zmienna przechowująca rolę użytkownika
 
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
+    // Pobieramy dane użytkownika (rola, email, username)
     $stmt = $pdo->prepare(
-        'SELECT username, email, czy_admin FROM users WHERE id = ?'
+        'SELECT username, email,  rodzaj FROM users WHERE id = ?' // Dodajemy pole "rola"
     );
     $stmt->execute([$userId]);
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
-    $stmt = $pdo->prepare("SELECT  * FROM addresses WHERE user_id = ?");
+
+    // Sprawdzamy rolę użytkownika
+    if ($userData) {
+        $userRole = $userData['rodzaj']; // rola użytkownika (np. admin, pracownik, klient)
+    }
+
+    // Pobieramy dane adresowe użytkownika
+    $stmt = $pdo->prepare("SELECT * FROM addresses WHERE user_id = ?");
     $stmt->execute([$userId]);
     $useradres = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-    if ($userData) {
-        $isAdmin = (bool) $userData['czy_admin'];
-    }
 }
 
 if (isset($_POST['logout'])) {
@@ -37,14 +38,12 @@ if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-$loggedIn = isset($_SESSION['user_id']);
+// Jeśli użytkownik jest zalogowany, synchronizujemy dane koszyka
 if ($loggedIn) {
-
     $stmt = $pdo->prepare('SELECT * FROM carts WHERE user_id = ?');
     $stmt->execute([$_SESSION['user_id']]);
     $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  
     $_SESSION['cart'] = [];
     foreach ($cart_items as $item) {
         $_SESSION['cart'][] = [
@@ -55,7 +54,6 @@ if ($loggedIn) {
         ];
     }
 } else {
-
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [];
     }
@@ -67,38 +65,36 @@ if (isset($_POST['add_to_cart'])) {
     $product_price = $_POST['product_price'];
 
     if ($loggedIn) {
-
+        // Sprawdzamy, czy produkt już znajduje się w koszyku użytkownika
         $stmt = $pdo->prepare('SELECT * FROM carts WHERE user_id = ? AND product_id = ?');
         $stmt->execute([$_SESSION['user_id'], $product_id]);
         $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($cart_item) {
-   
+            // Zaktualizuj ilość produktu w koszyku
             $new_quantity = $cart_item['quantity'] + 1;
             $updateStmt = $pdo->prepare('UPDATE carts SET quantity = ? WHERE user_id = ? AND product_id = ?');
             $updateStmt->execute([$new_quantity, $_SESSION['user_id'], $product_id]);
         } else {
-         
+            // Dodaj nowy produkt do koszyka
             $stmt = $pdo->prepare('INSERT INTO carts (user_id, product_id, product_name, product_price, quantity) 
                                    VALUES (?, ?, ?, ?, ?)');
             $stmt->execute([$_SESSION['user_id'], $product_id, $product_name, $product_price, 1]);
         }
 
-
         refresh_cart_session();
     } else {
-
+        // Dla niezalogowanego użytkownika dodajemy do sesji
         $found = false;
         foreach ($_SESSION['cart'] as &$item) {
             if ($item['id'] == $product_id) {
-                $item['quantity'] += 1; 
+                $item['quantity'] += 1;
                 $found = true;
                 break;
             }
         }
 
         if (!$found) {
-      
             $_SESSION['cart'][] = [
                 'id' => $product_id,
                 'name' => $product_name,
@@ -118,11 +114,8 @@ if (isset($_POST['remove_from_cart'])) {
     if ($loggedIn) {
         $stmt = $pdo->prepare('DELETE FROM carts WHERE user_id = ? AND product_id = ?');
         $stmt->execute([$_SESSION['user_id'], $product_id]);
-
-  
         refresh_cart_session();
     } else {
-
         $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($product_id) {
             return $item['id'] != $product_id;
         });
@@ -150,6 +143,7 @@ function refresh_cart_session() {
     }
 }
 
+// Obsługa zmiany danych użytkownika
 $zmiana_error = '';
 $zmiana_success = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
@@ -159,7 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
     $new_email = trim($_POST['new_email']);
     $zmiana_error = '';
     $zmiana_success = '';
-
 
     if (
         empty($new_username) ||
@@ -175,7 +168,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
     } elseif (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
         $zmiana_error = 'Nieprawidłowy adres e-mail.';
     } else {
-
         $stmt = $pdo->prepare(
             'SELECT id FROM users WHERE username = :username AND id != :user_id'
         );
@@ -193,7 +185,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
                 PASSWORD_DEFAULT
             );
 
-      
             $stmt = $pdo->prepare('
                 UPDATE users 
                 SET username = :username, password_hash = :password, email = :email 
@@ -217,11 +208,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['zmianadanych'])) {
     }
 }
 
+// Obsługa dodawania adresu
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
     $imie = htmlspecialchars(trim($_POST['new_name']));
     $nazwisko = htmlspecialchars(trim($_POST['new_surname']));
-    $stmt->bindParam(':imie', $imie);
-    $stmt->bindParam(':nazwisko', $nazwisko);
     $ulica = htmlspecialchars(trim($_POST['new_street']));
     $miasto = htmlspecialchars(trim($_POST['new_city']));
     $kod = htmlspecialchars(trim($_POST['new_postcode']));
@@ -233,15 +223,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
     } elseif (!preg_match('/^(\+?\d{1,3})? ?\d{3} ?\d{3} ?\d{3}$/', $tel)) {
         $address_error = "Nieprawidłowy format numeru telefonu.";
     } else {
-
         try {
-          
             $stmt = $pdo->prepare("
-                   INSERT INTO addresses (imie, nazwisko, ulica, miasto, kod, tel, user_id )
-            VALUES (:imie, :nazwisko, :ulica, :miasto, :kod,  :tel, :user_id)
+                INSERT INTO addresses (imie, nazwisko, ulica, miasto, kod, tel, user_id )
+                VALUES (:imie, :nazwisko, :ulica, :miasto, :kod,  :tel, :user_id)
             ");
 
-     
             $stmt->bindParam(':imie', $imie);
             $stmt->bindParam(':nazwisko', $nazwisko);
             $stmt->bindParam(':ulica', $ulica);
@@ -253,15 +240,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
             $stmt->execute();
             header("Location: index.php"); 
             exit();
-        
-            echo "<p>Adres został pomyślnie dodany!</p>";
         } catch (PDOException $e) {
-           
             $address_error = "Błąd bazy danych: " . $e->getMessage();
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -283,9 +268,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
             <button onclick="searchProduct()">Wyszukaj</button>
         </div>
         <nav>
+
+        <?php
+$sqlMenu = "SELECT * FROM podstrony";
+$resultMenu = $pdo->query($sqlMenu);
+
+
+?>
+
+
+
+
             <ul>
-                <li><a href="index.php">Strona Główna</a></li>
-                <li><a href="forgot_password.php">Motocykle</a></li>
+           
+    <li class="nav-item">
+        <a class="nav-link" href="index.php">Strona Główna</a>
+    </li>
+    <?php while ($row = $resultMenu->fetch(PDO::FETCH_ASSOC)): ?>
+        <li class="nav-item">  
+            <a class="nav-link" href="view_page.php?id=<?php echo $row['id']; ?>"><?php echo htmlspecialchars($row['tytul']); ?></a>
+        </li>
+        
+    <?php endwhile; ?>
+
+                
+              
                 <?php if ($loggedIn): ?>
                     <li>
                         <div class="account-info">
@@ -435,7 +442,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_address'])) {
 <?php
       $stmt = $pdo->prepare("
     SELECT * FROM orders 
-    WHERE user_id = ? AND status != 'Zakończone' 
+    WHERE user_id = ? AND status != 'Zrealizowane' 
     ORDER BY order_date DESC
 ");
 $stmt->execute([$userId]);
@@ -443,7 +450,7 @@ $currentOrders = $stmt->fetchAll();
 
 $stmt = $pdo->prepare("
     SELECT * FROM orders 
-    WHERE user_id = ? AND status = 'Zakończone' 
+    WHERE user_id = ? AND status = 'Zrealizowane' 
     ORDER BY order_date DESC
 ");
 $stmt->execute([$userId]);
@@ -562,25 +569,40 @@ $completedOrders = $stmt->fetchAll();
     
     
             
-           
-          
-       
-        <?php if ($isAdmin === true) {
-            echo ' <div class="karta_dane">
-        <section class="admin-panel">
-       
-           
-            <h2>Panel Administracyjny</h2>
-            <section class="admin-options">
-          
-                <a href="uzytkownicy.php" class="btn btn-secondary" role="button">Zarządzaj użytkownikami</a>
-                <br> </br>
-                <a href="admin.php" class="btn btn-secondary">Zarządzaj produktami</a><br> </br>
-                <a href="zamowienia.php" class="btn btn-secondary">Przeglądaj zamówienia</a><br> </br>
-                <a href="kategorie.php" class="btn btn-secondary">zarządzaj kategoriami</a><br> </br>
+    <?php
+if ($loggedIn) {
+ 
+    if ($userRole === 'admin') {
+        echo ' 
+        <div class="karta_dane">
+            <section class="admin-panel">
+                <h2>Panel Administracyjny</h2>
+                <section class="admin-options">
+                    <a href="uzytkownicy.php" class="btn btn-secondary" role="button">Zarządzaj użytkownikami</a><br> </br>
+                    <a href="admin.php" class="btn btn-secondary">Zarządzaj produktami</a><br> </br>
+                    <a href="zamowienia.php" class="btn btn-secondary">Przeglądaj zamówienia</a><br> </br>
+                    <a href="kategorie.php" class="btn btn-secondary">Zarządzaj kategoriami</a><br> </br>
+                    <a href="podstrony.php" class="btn btn-secondary">Zarządzaj podstronami</a><br> </br>
+                </section>
+            </section>
+        </div>';
+    } elseif ($userRole === 'pracownik') {
+      
+        echo ' 
+        <div class="karta_dane">
+            <section class="admin-panel">
+                <h2>Panel Pracownika</h2>
+                <section class="admin-options">
+                    <a href="admin.php" class="btn btn-secondary">Zarządzaj produktami</a><br> </br>
+                    <a href="zamowienia.php" class="btn btn-secondary">Przeglądaj zamówienia</a><br> </br>
+                    <a href="kategorie.php" class="btn btn-secondary">Zarządzaj kategoriami</a><br> </br>
+                </section>
+            </section>
+        </div>';
+    }
+}
+?>
 
-            </section>';
-        } ?>
     </section>
 
     </div>

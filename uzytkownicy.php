@@ -6,28 +6,23 @@ $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
 $userData = null;
 $isAdmin = false;
-$status_admina = null;
 
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT username, email, czy_admin FROM users WHERE id = ?");
-    $stmt->execute([$userId]);     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-    if ($userData && $userData['czy_admin']) {
+    
+    $stmt = $pdo->prepare("SELECT rodzaj FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($userData && $userData['rodzaj'] === 'admin') {
         $isAdmin = true;
     }
-} else {
-  
-    $userId = null;
 }
 
-if ( $isAdmin !== true) {
+if (!$isAdmin) {
     header("Location: login.php");
-    exit;
+    exit();
 }
-
-
 
 $sql = "SELECT * FROM users";
 $result = $conn->query($sql);
@@ -40,72 +35,71 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zarządzanie użytkownikami</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style_login_rej.css">
+    <link rel="stylesheet" href="style.css">
 </head>    
 <style>
 .table{
-
     color:white;
 }
-    </style>
+</style>
 <body>
-    
+<header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="display-4">Panel Administracyjny</h1>
+            <p class="lead">Zarządzanie użytkownikami sklepu motocyklowego</p>
+        </div>
+    </header>
 <div class="container mt-5">
 
-    <h2>Panel Administracyjny</h2>
-    <p>Witaj w panelu administracyjnym, <?php echo $_SESSION['username']; ?>!</p>
+    <a href="logout.php" class="btn btn-danger">Wyloguj się</a>
+    <a href="index.php" class="btn btn-danger">Główna strona</a>
+    <a href="uzytkownicy.php" class="btn btn-danger">Zarządzaj użytkownikami</a>
+    <a href="kategorie.php" class="btn btn-danger">Zarządzaj kategoriami</a>
+    <a href="zamowienia.php" class="btn btn-danger">Zarządzaj zamówieniami</a>
+    <br><br>
 
-     
-    <a href="logout.php" class="btn btn-danger ">Wyloguj się</a>
-    <a href="index.php" class="btn btn-danger ">główna strona</a>
-    <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>
-    <a href="kategorie.php" class="btn btn-danger ">Zarządzaj kategoriami</a>
-    <a href="zamowienia.php" class="btn btn-danger ">Zarządzaj zamówieniami</a>
-                <br></br>
-    <h3 class="dane">Lista produktów</h3><br>
+    <h3 class="dane">Lista użytkowników</h3><br>
     <table class="table">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>username</th>
-                <th>email</th>
-                <th>data utworzenia</th>
-                <th>Czy admin</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Data utworzenia</th>
+                <th>Rodzaj konta</th>
                 <th>Opcje</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            $status_admina = 'null';
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
-                   if($row['czy_admin'] == 1){
-                    $status_admina = 'tak';}
-                    else{
-                      $status_admina = 'nie';
-                    }
-                    
-                   
+                  
+              
+
                     echo "<tr>";
                     echo "<td>" . $row['id'] . "</td>";
                     echo "<td>" . $row['username'] . "</td>";
                     echo "<td>" . $row['email'] . "</td>";
                     echo "<td>" . $row['created_at'] . "</td>";
-                    echo "<td>" . $status_admina . "</td>";
+                    echo "<td>" . $row['rodzaj'] . "</td>";
                     echo "<td>
                             <a href='edit_users.php?id=" . $row['id'] . "' class='btn btn-warning'>Edytuj</a> |
                             <a href='delete_users.php?id=" . $row['id'] . "' class='btn btn-danger'>Usuń</a>
                           </td>";
                     echo "</tr>";
-                   
                 }
             } else {
-                echo "<tr><td colspan='5'>Brak produktów</td></tr>";
+                echo "<tr><td colspan='6'>Brak użytkowników</td></tr>";
             }
             ?>
         </tbody>
     </table>
+    
 </div>
+<footer>
+        <p>&copy; 2024 Sklep Motocyklowy</p>
+    </footer>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -115,20 +109,3 @@ $result = $conn->query($sql);
 <?php
 $conn->close();
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

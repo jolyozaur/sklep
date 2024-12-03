@@ -81,5 +81,9 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </div>
 </div>
+<footer>
+        <p>&copy; 2024 Sklep Motocyklowy</p>
+    </footer>
+
 </body>
 </html>

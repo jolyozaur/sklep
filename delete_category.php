@@ -3,11 +3,20 @@ require 'db.php';
 
 
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    echo "Zaloguj się, aby usuwać kategorie.";
-    exit;
-}
+$loggedIn = isset($_SESSION['user_id']);
+$isAdmin = false;
 
+if ($loggedIn) {
+    $userId = $_SESSION['user_id'];
+    $stmt = $pdo->prepare("SELECT username, email, rodzaj FROM users WHERE id = ?");
+    $stmt->execute([$userId]); 
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+    if ($userData && ($userData['rodzaj'] === 'admin' || $userData['rodzaj'] === 'pracownik')) {
+        $isAllowed = true;
+    }
+}
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -16,7 +25,6 @@ try {
     exit;
 }
 
-// Usuwanie kategorii
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
     $stmt = $pdo->prepare("DELETE FROM categories WHERE id = ?");

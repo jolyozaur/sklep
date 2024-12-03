@@ -57,7 +57,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td><?php echo htmlspecialchars($order['status']); ?></td>
                             <td><?php echo date('Y-m-d H:i:s', strtotime($order['order_date'])); ?></td>
                             <td><?php echo number_format($order['total'], 2, ',', ' ') . ' zł'; ?></td>
-                            <td><a href="order_details.php?order_id="<?php echo $order['id']; ?>">Szczegóły</a></td>
+                            <td><a href="order_details.php?order_id="<?php echo $order['id']; ?>>Szczegóły</a></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

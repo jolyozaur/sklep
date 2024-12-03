@@ -2,6 +2,12 @@ body {
   background-color: #1b1b1b !important;
   color: #eaeaea !important   ;
 }
+.table{
+
+  color:white;
+  }
+
+
 * {
   margin: 0;
   padding: 0;

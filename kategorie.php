@@ -1,10 +1,31 @@
 <?php
 require 'db.php'; 
 
-
 session_start();
+
+
 if (!isset($_SESSION['user_id'])) {
     echo "Zaloguj się, aby edytować kategorie.";
+    exit;
+}
+
+$loggedIn = isset($_SESSION['user_id']);
+$isAllowed = false;
+
+if ($loggedIn) {
+    $user_id = $_SESSION['user_id'];
+    $stmt = $pdo->prepare("SELECT rodzaj FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+    if ($userData && ($userData['rodzaj'] === 'admin' || $userData['rodzaj'] === 'pracownik')) {
+        $isAllowed = true;
+    }
+}
+
+if (!$isAllowed) {
+    echo "Brak dostępu. Tylko administratorzy i pracownicy mogą edytować kategorie.";
     exit;
 }
 
@@ -19,24 +40,19 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])) {
     $type = trim($_POST['type']);
 
-   
     if (empty($type)) {
         $error = "Nazwa kategorii nie może być pusta.";
     } else {
-       
         if (isset($_POST['id']) && !empty($_POST['id'])) {
-      
             $stmt = $pdo->prepare("UPDATE categories SET type = ? WHERE id = ?");
             $stmt->execute([$type, $_POST['id']]);
             $success = "Kategoria została zaktualizowana.";
             header("Location: kategorie.php");
             exit;
         } else {
-       
             $stmt = $pdo->prepare("INSERT INTO categories (type) VALUES (?)");
             $stmt->execute([$type]);
             $success = "Kategoria została dodana.";
-            
         }
     }
 }
@@ -49,6 +65,7 @@ if (isset($_GET['edit'])) {
     $categoryToEdit = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -67,15 +84,18 @@ if (isset($_GET['edit'])) {
     
 </head>
 <body>
-    
+<header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="display-4">Panel Administracyjny</h1>
+            <p class="lead">Zarządzanie kategoriami sklepu motocyklowego</p>
+        </div>
+    </header>
 
     <main>
         <div class="container mt-5">
 
 
 
-        <h2>Panel Administracyjny</h2>
-    <p>Witaj w panelu administracyjnym, <?php echo $_SESSION['username']; ?>!</p>
     <a href="logout.php" class="btn btn-danger ">Wyloguj się</a>
     <a href="index.php" class="btn btn-danger ">główna strona</a>
     <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>

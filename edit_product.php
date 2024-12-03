@@ -10,18 +10,17 @@ $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT username, email, czy_admin FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT username, email, rodzaj FROM users WHERE id = ?");
     $stmt->execute([$userId]); 
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($userData && $userData['czy_admin']) {
-        $isAdmin = true;
+    // Sprawdzamy, czy użytkownik jest administratorem lub pracownikiem
+    if ($userData && ($userData['rodzaj'] === 'admin' || $userData['rodzaj'] === 'pracownik')) {
+        $isAllowed = true;
     }
-} else {
-    $userId = null;
 }
 
-if ($isAdmin !== true) {
+if (!$isAllowed) {
     header("Location: login.php");
     exit;
 }
@@ -160,6 +159,9 @@ $result_zdjecia = $stmt_zdjecia->get_result();
             <a href="admin.php" class="btn btn-secondary">Anuluj</a>
         </form>
     </div>
+    <footer>
+        <p>&copy; 2024 Sklep Motocyklowy</p>
+    </footer>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>

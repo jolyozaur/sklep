@@ -2,31 +2,32 @@
 session_start();
 require 'db.php';
 
-// Sprawdzenie, czy użytkownik jest zalogowany jako administrator
+// Sprawdzenie, czy użytkownik jest zalogowany i ma odpowiednią rolę (admin lub pracownik)
 $loggedIn = isset($_SESSION['user_id']);
 $username = $loggedIn ? $_SESSION['username'] : null;
 $userData = null;
-$isAdmin = false;
+$isAdminOrEmployee = false;
+
 
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT username, email, czy_admin FROM users WHERE id = ?");
+    
+ 
+    $stmt = $pdo->prepare("SELECT rodzaj FROM users WHERE id = ?");
     $stmt->execute([$userId]);
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($userData && $userData['czy_admin']) {
-        $isAdmin = true;
+    if ($userData && ($userData['rodzaj'] === 'admin' || $userData['rodzaj'] === 'pracownik')) {
+        $isAdminOrEmployee = true;
     }
-} else {
-    $userId = null;
 }
 
-if (!$isAdmin) {
+if (!$isAdminOrEmployee) {
     header("Location: login.php");
-    exit;
+    exit();
 }
 
-// Pobranie wszystkich zamówień
+
 $stmt = $pdo->prepare("SELECT * FROM orders ORDER BY order_date DESC");
 $stmt->execute();
 $orders = $stmt->fetchAll();
@@ -39,7 +40,7 @@ $orders = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zarządzanie zamówieniami</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style_login_rej.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <style>
 .table {
@@ -47,12 +48,15 @@ $orders = $stmt->fetchAll();
 }
 </style>
 <body>
-    
+<header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="display-4">Panel Administracyjny</h1>
+            <p class="lead">Zarządzanie zamówieniami sklepu motocyklowego</p>
+        </div>
+    </header>
 <div class="container mt-5">
 
-    <h2>Panel Administracyjny</h2>
-    <p>Witaj w panelu administracyjnym, <?php echo $_SESSION['username']; ?>!</p>
-
+    
     <a href="logout.php" class="btn btn-danger ">Wyloguj się</a>
     <a href="index.php" class="btn btn-danger ">główna strona</a>
     <a href="uzytkownicy.php" class="btn btn-danger ">Zarządzaj uzytkownikami</a>
@@ -134,6 +138,9 @@ $orders = $stmt->fetchAll();
         </tbody>
     </table>
 </div>
+<footer>
+        <p>&copy; 2024 Sklep Motocyklowy</p>
+    </footer>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>

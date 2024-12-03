@@ -7,23 +7,20 @@ $isAdmin = false;
 
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT czy_admin FROM users WHERE id = ?");
-    $stmt->execute([$userId]);
+    $stmt = $pdo->prepare("SELECT username, email, rodzaj FROM users WHERE id = ?");
+    $stmt->execute([$userId]); 
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($userData && $userData['czy_admin']) {
-        $isAdmin = true;
+    // Sprawdzamy, czy użytkownik jest administratorem lub pracownikiem
+    if ($userData && ($userData['rodzaj'] === 'admin' || $userData['rodzaj'] === 'pracownik')) {
+        $isAllowed = true;
     }
-} else {
+}
+
+if (!$isAllowed) {
     header("Location: login.php");
     exit;
 }
-
-if (!isset($_GET['id'])) {
-    echo "Brak ID zamówienia.";
-    exit;
-}
-
 $orderId = $_GET['id'];
 
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = ?");
@@ -60,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+    
 <div class="container mt-5">
     <h2>Edycja zamówienia</h2>
     <p><strong>ID Zamówienia:</strong> <?= htmlspecialchars($order['id']) ?></p>
@@ -79,6 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <a href="admin.php" class="btn btn-secondary mt-3">Powrót do listy zamówień</a>
+
 </div>
+<footer>
+        <p>&copy; 2024 Sklep Motocyklowy</p>
+    </footer>
+
 </body>
 </html>

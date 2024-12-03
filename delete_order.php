@@ -7,18 +7,20 @@ $isAdmin = false;
 
 if ($loggedIn) {
     $userId = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT czy_admin FROM users WHERE id = ?");
-    $stmt->execute([$userId]);
+    $stmt = $pdo->prepare("SELECT username, email, rodzaj FROM users WHERE id = ?");
+    $stmt->execute([$userId]); 
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($userData && $userData['czy_admin']) {
-        $isAdmin = true;
+
+    if ($userData && ($userData['rodzaj'] === 'admin' || $userData['rodzaj'] === 'pracownik')) {
+        $isAllowed = true;
     }
-} else {
+}
+
+if (!$isAllowed) {
     header("Location: login.php");
     exit;
 }
-
 
 if (!isset($_GET['id'])) {
     echo "Brak ID zamówienia.";
