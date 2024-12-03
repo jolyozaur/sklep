@@ -211,7 +211,13 @@ $paymentMethods = $stmt->fetchAll();
                 <strong>Całkowita kwota: <?= number_format($totalAmount, 2) ?> PLN</strong>
             </div>
             <button type="submit" name="payment_form" class="btn btn-success">Zapłać</button>
+            <br></br>
+            <button class="btn btn-danger" onclick="window.location.href='index.php';">Powrót do strony głównej</button>
+
+
         </form>
+       
+
     </div>
     <div class="cart-box">
         <h4 class="text-center">Koszyk</h4>

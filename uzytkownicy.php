@@ -51,13 +51,13 @@ $result = $conn->query($sql);
         <div class="container mt-5">
 
 
-
-<a href="index.php" class="btn btn-danger">Strona główna</a>
-<a href="uzytkownicy.php" class="btn btn-danger">Zarządzaj użytkownikami</a>
-<a href="kategorie.php" class="btn btn-danger">Zarządzaj kategoriami</a>
-<a href="zamowienia.php" class="btn btn-danger">Zarządzaj zamówieniami</a>
-<a href="podstrony.php" class="btn btn-danger">Zarządzaj podstronami</a>
-<a href="admin.php" class="btn btn-danger">Zarządzaj produktami</a>
+        <a href="index.php" class="btn btn-danger mb-3">Strona główna</a>
+        <a href="uzytkownicy.php" class="btn btn-danger mb-3">Zarządzaj <br> użytkownikami</a>
+        <a href="kategorie.php" class="btn btn-danger mb-3">Zarządzaj<br> kategoriami</a>
+        <a href="zamowienia.php" class="btn btn-danger mb-3">Zarządzaj<br> zamówieniami</a>
+        <a href="podstrony.php" class="btn btn-danger mb-3">Zarządzaj<br> podstronami</a>
+        <a href="admin.php" class="btn btn-danger mb-3">Zarządzaj<br> produktami</a>
+        <a href="dostawy.php" class="btn btn-danger mb-3">Zarządzaj<br> dostawami</a>
     </header>
 <div class="container mt-5">
 
